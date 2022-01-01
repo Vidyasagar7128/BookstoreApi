@@ -89,7 +89,17 @@ namespace BookstoreRepository.Repository
                     }
                     else
                     {
-                        return "Invalid Email.";
+                        await reader.CloseAsync();
+                        SqlCommand sqlPass = new SqlCommand("select UserId, Name, Email, Mobile from Users where Password ='" + encPassword + "'", con);
+                        SqlDataReader readerPass = await sqlPass.ExecuteReaderAsync();
+                        if (await readerPass.ReadAsync())
+                        {
+                            return "Invalid Email.";
+                        }
+                        else
+                        {
+                            return "Invalid Email & Password.";
+                        }
                     }
                 }
             }
