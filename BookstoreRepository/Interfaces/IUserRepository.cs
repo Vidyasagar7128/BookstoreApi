@@ -6,5 +6,7 @@ namespace BookstoreRepository.Interfaces
     public interface IUserRepository
     {
         Task<int> AddUser(CreateUserModel createUser);
+        Task<string> LoginUser(string email, string password);
+        string JwtToken(string email);
     }
 }

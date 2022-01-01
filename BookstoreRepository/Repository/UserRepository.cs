@@ -1,9 +1,12 @@
 ﻿using BookstoreModel;
 using BookstoreRepository.Interfaces;
 using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using StackExchange.Redis;
 using System;
-using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,6 +21,11 @@ namespace BookstoreRepository.Repository
         }
         public IConfiguration Configuration { get; set; }
 
+        /// <summary>
+        /// Adding user to database
+        /// </summary>
+        /// <param name="createUser">CreateUserModel</param>
+        /// <returns>status</returns>
         public async Task<int> AddUser(CreateUserModel createUser)
         {
             try
@@ -43,6 +51,77 @@ namespace BookstoreRepository.Repository
             }
         }
 
+        
+        public async Task<string> LoginUser(string email, string password)
+        {
+            try
+            {
+                var encPassword = EncryptPassword(password);
+                using (SqlConnection con = new SqlConnection(this.Configuration.GetConnectionString("database")))
+                {
+                    SqlCommand sql = new SqlCommand("select UserId, Name, Email, Mobile from Users where Email ='" + email + "'", con);
+                    await con.OpenAsync();
+                    SqlDataReader reader = await sql.ExecuteReaderAsync();
+                    if (await reader.ReadAsync())
+                    {
+                        await reader.CloseAsync();
+                        SqlCommand sql1 = new SqlCommand("select UserId, Name, Email, Mobile from Users where Password ='" + encPassword + "'", con);
+                        SqlDataReader reader1 = await sql1.ExecuteReaderAsync();
+                        if (await reader1.ReadAsync())
+                        {
+                            var UserId = reader1["UserId"];
+                            var Name = reader1["Name"];
+                            var Email = reader1["Email"];
+                            var Mobile = reader1["Mobile"];
+
+                            ConnectionMultiplexer connectionMultiplexer = ConnectionMultiplexer.Connect("127.0.0.1:6379");
+                            IDatabase database = connectionMultiplexer.GetDatabase();
+                            database.StringSet(key: "name", Name.ToString());
+                            database.StringSet(key: "email", Email.ToString());
+                            database.StringSet(key: "mobile", Mobile.ToString());
+                            await con.CloseAsync();
+                            return "Login Successfully!";
+                        }
+                        else
+                        {
+                            return "Invalid Password.";
+                        }
+                    }
+                    else
+                    {
+                        return "Invalid Email.";
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
+
+        public string JwtToken(string email)
+        {
+            byte[] key = Encoding.UTF8.GetBytes(this.Configuration["SecretKey"]);
+            SymmetricSecurityKey securityKey = new SymmetricSecurityKey(key);
+            SecurityTokenDescriptor descriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new[]
+                {
+                      new Claim(ClaimTypes.Name, email)
+                }),
+                Expires = DateTime.UtcNow.AddMinutes(30),
+                SigningCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature)
+            };
+            JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
+            JwtSecurityToken token = handler.CreateJwtSecurityToken(descriptor);
+            return handler.WriteToken(token);
+        }
+
+        /// <summary>
+        /// Password Encryption
+        /// </summary>
+        /// <param name="password">Password string</param>
+        /// <returns>Encrypted Password</returns>
         private string EncryptPassword(string password)
         {
             byte[] data = UTF8Encoding.UTF8.GetBytes(password);

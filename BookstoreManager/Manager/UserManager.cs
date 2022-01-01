@@ -27,5 +27,29 @@ namespace BookstoreManager.Manager
                 throw new Exception(e.Message);
             }
         }
+
+        public async Task<string> Login(string email, string password)
+        {
+            try
+            {
+                return await this._userRepository.LoginUser(email, password);
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
+
+        public string JwtToken(string email)
+        {
+            try
+            {
+                return this._userRepository.JwtToken(email);
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
     }
 }
