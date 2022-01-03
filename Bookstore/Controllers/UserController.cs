@@ -69,5 +69,63 @@ namespace Bookstore.Controllers
                 return this.NotFound(new { status = false, Response = e.Message });
             }
         }
+
+        /// <summary>
+        /// Reset Password
+        /// </summary>
+        /// <param name="resetPassword">from Body</param>
+        /// <returns>Changed or Not</returns>
+        [HttpPut]
+        [Route("ForgetPassword")]
+        public async Task<IActionResult> ForgetPassword([FromBody] ResetPasswordModel resetPassword)
+        {
+            try
+            {
+                var result = await this._userManager.ForgetPass(resetPassword);
+                if (result == 1)
+                {
+                    return this.Ok(new { status = true, Response = "Password changed." });
+                }
+                else if (result == 0)
+                {
+                    return this.BadRequest("Password and Confirm Password not Matching!");
+                }
+                else
+                {
+                    return this.BadRequest("Something went wrong!");
+                }
+            }
+            catch (Exception e)
+            {
+                return this.NotFound(new { status = false, Response = e.Message });
+            }
+        }
+
+        /// <summary>
+        /// Reset Password
+        /// </summary>
+        /// <param name="email">from Query</param>
+        /// <returns>Email sent or not</returns>
+        [HttpGet]
+        [Route("Reset")]
+        public async Task<IActionResult> ResetPassword([FromQuery] string email)
+        {
+            try
+            {
+                var result = await this._userManager.Reset(email);
+                if (result.Equals("Email sent!"))
+                {
+                    return this.Ok(new { status = true, Response = "Email sent!" });
+                }
+                else
+                {
+                    return this.BadRequest("Something went wrong!");
+                }
+            }
+            catch (Exception e)
+            {
+                return this.NotFound(new { status = false, Response = e.Message });
+            }
+        }
     }
 }

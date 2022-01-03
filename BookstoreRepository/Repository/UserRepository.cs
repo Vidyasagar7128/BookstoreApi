@@ -1,11 +1,13 @@
 ﻿using BookstoreModel;
 using BookstoreRepository.Interfaces;
+using Experimental.System.Messaging;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using StackExchange.Redis;
 using System;
 using System.Data.SqlClient;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net.Mail;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -51,7 +53,12 @@ namespace BookstoreRepository.Repository
             }
         }
 
-        
+        /// <summary>
+        /// Login User
+        /// </summary>
+        /// <param name="email">string</param>
+        /// <param name="password">string</param>
+        /// <returns>logged In or failed</returns>
         public async Task<string> LoginUser(string email, string password)
         {
             try
@@ -79,11 +86,14 @@ namespace BookstoreRepository.Repository
                             database.StringSet(key: "name", Name.ToString());
                             database.StringSet(key: "email", Email.ToString());
                             database.StringSet(key: "mobile", Mobile.ToString());
+                            await reader1.CloseAsync();
                             await con.CloseAsync();
                             return "Login Successfully!";
                         }
                         else
                         {
+                            await reader1.CloseAsync();
+                            await con.CloseAsync();
                             return "Invalid Password.";
                         }
                     }
@@ -94,10 +104,14 @@ namespace BookstoreRepository.Repository
                         SqlDataReader readerPass = await sqlPass.ExecuteReaderAsync();
                         if (await readerPass.ReadAsync())
                         {
+                            await readerPass.CloseAsync();
+                            await con.CloseAsync();
                             return "Invalid Email.";
                         }
                         else
                         {
+                            await readerPass.CloseAsync();
+                            await con.CloseAsync();
                             return "Invalid Email & Password.";
                         }
                     }
@@ -109,6 +123,11 @@ namespace BookstoreRepository.Repository
             }
         }
 
+        /// <summary>
+        /// Jwt Token
+        /// </summary>
+        /// <param name="email">passing email</param>
+        /// <returns>Token</returns>
         public string JwtToken(string email)
         {
             byte[] key = Encoding.UTF8.GetBytes(this.Configuration["SecretKey"]);
@@ -125,6 +144,104 @@ namespace BookstoreRepository.Repository
             JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
             JwtSecurityToken token = handler.CreateJwtSecurityToken(descriptor);
             return handler.WriteToken(token);
+        }
+
+        public async Task<int> ForgetPassword(ResetPasswordModel passwordModel)
+        {
+            try
+            {
+                var encPassword = EncryptPassword(passwordModel.OldPassword);
+                var encNewPassword = EncryptPassword(passwordModel.Password);
+                if (passwordModel.Password.Equals(passwordModel.ConfirmPassword))
+                {
+                    using (SqlConnection con = new SqlConnection(this.Configuration.GetConnectionString("database")))
+                    {
+                        SqlCommand sql = new SqlCommand("update Users set Password='" + encNewPassword + "' where Password = '" + encPassword + "'", con);
+                        await con.OpenAsync();
+                        int status = await sql.ExecuteNonQueryAsync();
+                        await con.CloseAsync();
+                        return status;
+                    }
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
+
+        public async Task<string> ResetPassword(string email)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(this.Configuration.GetConnectionString("database")))
+                {
+                    SqlCommand sql = new SqlCommand("select Email from Users where Email ='"+ email +"'", con);
+                    await con.OpenAsync();
+                    SqlDataReader reader = await sql.ExecuteReaderAsync();
+                    if (await reader.ReadAsync())
+                    {
+                        var Email = reader["Email"];
+                    }
+                    else
+                    {
+                        await reader.CloseAsync();
+                        return "Email doesn't exist!";
+                    }
+                    await reader.CloseAsync();
+                    await con.CloseAsync();
+                    MailMessage mail = new MailMessage();
+                    mail.From = new MailAddress(this.Configuration.GetSection("EmailId").Value);
+                    mail.To.Add(email);
+                    mail.Subject = "[Bookstore] Password Reset Link";
+                    this.SendMSMailQueue();
+                    mail.Body = this.GetMSMailQueue();
+                    SmtpClient smtpClient = new SmtpClient("smtp.gmail.com", 587);
+                    smtpClient.Credentials = new System.Net.NetworkCredential(this.Configuration.GetSection("EmailId").Value, this.Configuration.GetSection("EPassword").Value);
+                    smtpClient.EnableSsl = true;
+                    smtpClient.Send(mail);
+                    return "Email sent!";
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
+
+        /// <summary>
+        /// Email sent by MSMQ
+        /// </summary>
+        private void SendMSMailQueue()
+        {
+            MessageQueue messageQueue;
+            if (MessageQueue.Exists(@".\Private$\Bookstore"))
+            {
+                messageQueue = new MessageQueue(@".\Private$\Bookstore");
+            }
+            else
+            {
+                messageQueue = MessageQueue.Create(@".\Private$\Bookstore");
+            }
+
+            messageQueue.Label = "MsMq";
+            //string body = "Do you want to change your Password!";
+            messageQueue.Send("Do you want to change your Password!");
+        }
+
+        /// <summary>
+        /// get mail in queue
+        /// </summary>
+        /// <returns>received or not</returns>
+        private string GetMSMailQueue()
+        {
+            var queue = new MessageQueue(@".\Private$\Bookstore");
+            var received = queue.Receive();
+            return received.ToString();
         }
 
         /// <summary>

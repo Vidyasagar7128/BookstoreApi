@@ -14,7 +14,7 @@ namespace BookstoreModel
           ErrorMessage = "Name is Invalid.")]
         public string Name { get; set; }
         [Required]
-        [RegularExpression(@"^[a-z]+[0-9]?[@]+[a-z]+[.]+[a-z]{3}$",
+        [RegularExpression(@"^[a-z0-9][-a-z0-9._]+@([-a-z0-9]+\.)+[a-z]{2,5}$",
           ErrorMessage = "Email is Invalid.")]
         public string Email { get; set; }
         [Required]

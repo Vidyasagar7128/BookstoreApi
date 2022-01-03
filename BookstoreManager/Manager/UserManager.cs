@@ -40,11 +40,39 @@ namespace BookstoreManager.Manager
             }
         }
 
+        public async Task<int> ForgetPass(ResetPasswordModel passwordModel)
+        {
+            try
+            {
+                return await this._userRepository.ForgetPassword(passwordModel);
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
         public string JwtToken(string email)
         {
             try
             {
                 return this._userRepository.JwtToken(email);
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
+
+        /// <summary>
+        /// for send Email
+        /// </summary>
+        /// <param name="email">string</param>
+        /// <returns>email sent or not</returns>
+        public async Task<string> Reset(string email)
+        {
+            try
+            {
+                return await this._userRepository.ResetPassword(email);
             }
             catch (Exception e)
             {
