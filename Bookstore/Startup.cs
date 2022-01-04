@@ -34,6 +34,8 @@ namespace Bookstore
             services.AddMvc();
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IUserManager, UserManager>();
+            services.AddTransient<IBookRepository, BookRepository>();
+            services.AddTransient<IBookManager, BookManager>();
 
             services.AddCors(options => options.AddPolicy("AllowAllHeaders", builder =>
             {
