@@ -54,6 +54,11 @@ namespace BookstoreRepository.Repository
             }
         }
 
+        /// <summary>
+        /// Adding Books
+        /// </summary>
+        /// <param name="bookModel">object of bookmodel</param>
+        /// <returns>added or not</returns>
         public async Task<int> AddBook(BookModel bookModel)
         {
             try
@@ -69,6 +74,25 @@ namespace BookstoreRepository.Repository
                     sql.Parameters.AddWithValue("@Quantity", bookModel.Quantity);
                     sql.Parameters.AddWithValue("@Price", bookModel.Price);
                     sql.Parameters.AddWithValue("@Details", bookModel.Details);
+                    await con.OpenAsync();
+                    int status = await sql.ExecuteNonQueryAsync();
+                    await con.CloseAsync();
+                    return status;
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
+
+        public async Task<int> Delete(int bookId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(this.Configuration.GetConnectionString("database")))
+                {
+                    SqlCommand sql = new SqlCommand("delete from Books where BookId = '" + bookId + "'", con);
                     await con.OpenAsync();
                     int status = await sql.ExecuteNonQueryAsync();
                     await con.CloseAsync();

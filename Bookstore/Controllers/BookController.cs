@@ -44,6 +44,11 @@ namespace Bookstore.Controllers
             }
         }
 
+        /// <summary>
+        /// BookAdd
+        /// </summary>
+        /// <param name="bookModel">BookModel from body</param>
+        /// <returns>Added or not</returns>
         [HttpPost]
         [Route("Addbook")]
         public async Task<IActionResult> BookAdd([FromBody] BookModel bookModel)
@@ -54,6 +59,33 @@ namespace Bookstore.Controllers
                 if (result == -1)
                 {
                     return this.Ok(new { status = true, Response = "Book Added successfully." });
+                }
+                else
+                {
+                    return this.BadRequest(new { status = false, Response = "Something went wrong." });
+                }
+            }
+            catch (Exception e)
+            {
+                return this.NotFound(e.Message);
+            }
+        }
+
+        /// <summary>
+        /// Delete Books
+        /// </summary>
+        /// <param name="bookId">bookId from query</param>
+        /// <returns>deleted or not</returns>
+        [HttpDelete]
+        [Route("delete")]
+        public async Task<IActionResult> DeleteBooks([FromQuery] int bookId)
+        {
+            try
+            {
+                int result = await this._bookManager.DeleteBook(bookId);
+                if (result == 1)
+                {
+                    return this.Ok(new { status = true, Response = "Book deleted successfully." });
                 }
                 else
                 {

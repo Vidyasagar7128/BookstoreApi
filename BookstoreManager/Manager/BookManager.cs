@@ -49,5 +49,22 @@ namespace BookstoreManager.Manager
                 throw new Exception(e.Message);
             }
         }
+
+        /// <summary>
+        /// Delete book
+        /// </summary>
+        /// <param name="bookId">int id</param>
+        /// <returns>deleted or not</returns>
+        public async Task<int> DeleteBook(int bookId)
+        {
+            try
+            {
+                return await this._bookRepository.Delete(bookId);
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
     }
 }

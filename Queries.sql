@@ -23,14 +23,16 @@ CREATE TABLE BookImages (ImageId int IDENTITY PRIMARY KEY NOT NULL, ImageUrl var
 CREATE TABLE Books (BookId int IDENTITY PRIMARY KEY NOT NULL, Title varchar(100),
 Author varchar(100),Rating float(53), Reviews int, Quantity int, Price float(53), Details varchar(255));
 SET IDENTITY_INSERT Bookstore.[dbo].Books ON
-INSERT Books(Title,Author,Rating, Price, Details) VALUES('The Alchemist','Steve krug',4.4,1200,'Best book for read.')
+INSERT Books VALUES('The Alchemist','Steve krug',4.4,50,10,1200,'Best book for read.')
 select * from Books
 select * from BookImages
 select * from Users
 select * from Reviews
 update Books set Reviews = 0 where BookId = 2
 
-INSERT BookImages VALUES('https//:google.com',1)
+INSERT BookImages VALUES('https//:img2.com',6)
+delete from Books where BookId=4
+delete from BookImages where BookId=4
 --------------------------------------------Reviews Table-------------------
 CREATE TABLE Reviews (ReviewId int IDENTITY PRIMARY KEY NOT NULL, Star float(53), Text varchar(255),
 BookId int FOREIGN KEY REFERENCES Books(BookId),UserId int FOREIGN KEY REFERENCES Users(UserId))
@@ -39,3 +41,7 @@ INSERT Reviews VALUES(4.5,'Best book',1,2)
 drop table BookImages
 drop table Books
 drop table Reviews
+--------------------------------------------------------Added Cascade-----------------------------
+alter table BookImages drop constraint FK__BookImage__BookI__3B75D760
+alter table BookImages add constraint FK__BookImage__BookI__3B75D760
+foreign key (BookId) references Books(BookId) on delete cascade
