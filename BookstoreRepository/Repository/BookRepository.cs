@@ -86,6 +86,11 @@ namespace BookstoreRepository.Repository
             }
         }
 
+        /// <summary>
+        /// Delete book
+        /// </summary>
+        /// <param name="bookId">int</param>
+        /// <returns>deleted or not</returns>
         public async Task<int> Delete(int bookId)
         {
             try
@@ -93,6 +98,37 @@ namespace BookstoreRepository.Repository
                 using (SqlConnection con = new SqlConnection(this.Configuration.GetConnectionString("database")))
                 {
                     SqlCommand sql = new SqlCommand("delete from Books where BookId = '" + bookId + "'", con);
+                    await con.OpenAsync();
+                    int status = await sql.ExecuteNonQueryAsync();
+                    await con.CloseAsync();
+                    return status;
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
+
+        /// <summary>
+        /// Update Book
+        /// </summary>
+        /// <param name="bookModel">passing bookModel</param>
+        /// <returns>Update or not</returns>
+        public async Task<int> Update(BookModel bookModel)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(this.Configuration.GetConnectionString("database")))
+                {
+                    SqlCommand sql = new SqlCommand("UpdateBookSP", con);
+                    sql.CommandType = System.Data.CommandType.StoredProcedure;
+                    sql.Parameters.AddWithValue("@BookId", bookModel.BookId);
+                    sql.Parameters.AddWithValue("@Title", bookModel.Title);
+                    sql.Parameters.AddWithValue("@Author", bookModel.Author);
+                    sql.Parameters.AddWithValue("@Quantity", bookModel.Quantity);
+                    sql.Parameters.AddWithValue("@Price", bookModel.Price);
+                    sql.Parameters.AddWithValue("@Details", bookModel.Details);
                     await con.OpenAsync();
                     int status = await sql.ExecuteNonQueryAsync();
                     await con.CloseAsync();

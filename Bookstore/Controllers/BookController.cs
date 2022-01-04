@@ -97,5 +97,32 @@ namespace Bookstore.Controllers
                 return this.NotFound(e.Message);
             }
         }
+
+        /// <summary>
+        /// Update Books
+        /// </summary>
+        /// <param name="bookModel">passing bookModel</param>
+        /// <returns>Update or not</returns>
+        [HttpPut]
+        [Route("update")]
+        public async Task<IActionResult> UpdateBooks([FromBody] BookModel bookModel)
+        {
+            try
+            {
+                int result = await this._bookManager.UpdateBook(bookModel);
+                if (result == -1)
+                {
+                    return this.Ok(new { status = true, Response = "Book Updated successfully." });
+                }
+                else
+                {
+                    return this.BadRequest(new { status = false, Response = "Something went wrong." });
+                }
+            }
+            catch (Exception e)
+            {
+                return this.NotFound(e.Message);
+            }
+        }
     }
 }

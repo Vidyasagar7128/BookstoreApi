@@ -14,3 +14,18 @@ INSERT INTO Books VALUES(@Title,@Author,@Rating,@Reviews,@Quantity,@Price,@Detai
 END
 GO
 select * from Books
+--------------------------------------------for Update Books-----------------------
+CREATE PROCEDURE UpdateBookSP(
+	@BookId int,
+	@Title varchar(100),
+	@Author varchar(100),
+	@Quantity int,
+	@Price bigint,
+	@Details varchar(255)
+)
+AS
+BEGIN
+SET NOCOUNT ON
+UPDATE Books SET Title= @Title, Author= @Author, Quantity= @Quantity, Price= @Price, Details = @Details WHERE BookId= @BookId
+END
+GO

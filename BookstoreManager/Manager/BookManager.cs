@@ -66,5 +66,22 @@ namespace BookstoreManager.Manager
                 throw new Exception(e.Message);
             }
         }
+
+        /// <summary>
+        /// Update Book
+        /// </summary>
+        /// <param name="bookModel">passing bookModel</param>
+        /// <returns>Update or not</returns>
+        public async Task<int> UpdateBook(BookModel bookModel)
+        {
+            try
+            {
+                return await this._bookRepository.Update(bookModel);
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
     }
 }

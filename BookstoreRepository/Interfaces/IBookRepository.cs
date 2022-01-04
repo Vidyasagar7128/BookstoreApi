@@ -9,5 +9,6 @@ namespace BookstoreRepository.Interfaces
         Task<IEnumerable<BookModel>> AllBooks();
         Task<int> AddBook(BookModel bookModel);
         Task<int> Delete(int bookId);
+        Task<int> Update(BookModel bookModel);
     }
 }
