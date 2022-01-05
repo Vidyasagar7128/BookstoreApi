@@ -10,5 +10,6 @@ namespace BookstoreManager.Interfaces
         Task<int> AddBooks(BookModel bookModel);
         Task<int> DeleteBook(int bookId);
         Task<int> UpdateBook(BookModel bookModel);
+        Task<BookModel> GetOneBook(int bookId);
     }
 }

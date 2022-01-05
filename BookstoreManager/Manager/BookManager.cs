@@ -83,5 +83,22 @@ namespace BookstoreManager.Manager
                 throw new Exception(e.Message);
             }
         }
+
+        /// <summary>
+        /// Get One Book
+        /// </summary>
+        /// <param name="bookId">int id</param>
+        /// <returns>book object</returns>
+        public async Task<BookModel> GetOneBook(int bookId)
+        {
+            try
+            {
+                return await this._bookRepository.GetOne(bookId);
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
     }
 }

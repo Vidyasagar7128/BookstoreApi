@@ -140,5 +140,41 @@ namespace BookstoreRepository.Repository
                 throw new Exception(e.Message);
             }
         }
+
+        public async Task<BookModel> GetOne(int bookId)
+        {
+            try
+            {
+                BookModel book = new BookModel();
+                using (SqlConnection con = new SqlConnection(this.Configuration.GetConnectionString("database")))
+                {
+                    SqlCommand sql = new SqlCommand("select * from Books where BookId='" + bookId + "'",con);
+                    await con.OpenAsync();
+                    SqlDataReader reader = await sql.ExecuteReaderAsync();
+                    if (await reader.ReadAsync())
+                    {
+                        book.BookId = (int) reader["BookId"];
+                        book.Title = reader["Title"].ToString();
+                        book.Author = reader["Author"].ToString();
+                        book.Rating = (double)reader["Rating"];
+                        book.Reviews = (int)reader["Reviews"];
+                        book.Quantity = (int)reader["Quantity"];
+                        book.Price = (double)reader["Price"];
+                        book.Details = reader["Details"].ToString();
+                        await con.CloseAsync();
+                    }
+                    else
+                    {
+                        throw new Exception("Sorry! Book does not exist with this BookId.");
+                    }
+                    
+                    return book;
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
     }
 }

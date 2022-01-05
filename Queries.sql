@@ -23,7 +23,7 @@ CREATE TABLE BookImages (ImageId int IDENTITY PRIMARY KEY NOT NULL, ImageUrl var
 CREATE TABLE Books (BookId int IDENTITY PRIMARY KEY NOT NULL, Title varchar(100),
 Author varchar(100),Rating float(53), Reviews int, Quantity int, Price float(53), Details varchar(255));
 SET IDENTITY_INSERT Bookstore.[dbo].Books ON
-INSERT Books VALUES('The Alchemist','Steve krug',4.4,50,10,1200,'Best book for read.')
+INSERT Books VALUES('Think And Grow Rich','Napoleon Hill',4.4,40,10,290.00,'Think and Grow Rich is a book written by Napoleon Hill in 1937 and promoted as a personal development and self-improvement book.')
 select * from Books
 select * from BookImages
 select * from Users

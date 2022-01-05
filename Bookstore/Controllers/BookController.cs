@@ -124,5 +124,27 @@ namespace Bookstore.Controllers
                 return this.NotFound(e.Message);
             }
         }
+
+        [HttpGet]
+        [Route("book")]
+        public async Task<IActionResult> GetOneBookById([FromQuery] int bookId)
+        {
+            try
+            {
+                BookModel result = await this._bookManager.GetOneBook(bookId);
+                if (result != null)
+                {
+                    return this.Ok(new { status = true,Response = "Book fetched successfully.", Data = result });
+                }
+                else
+                {
+                    return this.BadRequest(new { status = false, Response = "Something went wrong." });
+                }
+            }
+            catch (Exception e)
+            {
+                return this.NotFound(e.Message);
+            }
+        }
     }
 }
