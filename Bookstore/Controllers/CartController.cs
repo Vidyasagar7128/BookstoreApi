@@ -38,11 +38,11 @@ namespace Bookstore.Controllers
                 int result = await this._cartManager.Bookadd(userId, bookId);
                 if (result == -1)
                 {
-                    return this.Ok(new { status = true, Response = "Book added to cart." });
+                    return this.Ok(new { status = true, Message = "Book added to cart." });
                 }
                 else
                 {
-                    return this.BadRequest(new { status = false, Response = "Something went wrong." });
+                    return this.BadRequest(new { status = false, Message = "Something went wrong." });
                 }
             }
             catch (Exception e)
@@ -62,16 +62,45 @@ namespace Bookstore.Controllers
                 int result = await this._cartManager.DeletefromCart(userId, bookId);
                 if (result == 1)
                 {
-                    return this.Ok(new { status = true, Response = "Book deleted from cart." });
+                    return this.Ok(new { status = true, Message = "Book deleted from cart." });
                 }
                 else
                 {
-                    return this.BadRequest(new { status = false, Response = "Something went wrong." });
+                    return this.BadRequest(new { status = false, Message = "Something went wrong." });
                 }
             }
             catch (Exception e)
             {
                 return this.NotFound(e.Message);
+            }
+        }
+
+        /// <summary>
+        /// Increase Quantity
+        /// </summary>
+        /// <param name="bookId">passing bookId</param>
+        /// <returns>Increamented or not</returns>
+        [HttpPut]
+        [Route("increase")]
+        public async Task<IActionResult> IncreaseQuantity([FromQuery] int bookId)
+        {
+            try
+            {
+                Request.Headers.TryGetValue("Authorization", out this.head);
+                int id = await this._auth.ValidateJwtToken(this.head);
+                int result = await this._cartManager.IncreamentQuantity(id, bookId);
+                if (result == -1)
+                {
+                    return this.Ok(new { status = true, Message = "Quantity Increamented" });
+                }
+                else
+                {
+                    return this.BadRequest(new { status = false, Message = result });
+                }
+            }
+            catch (Exception e)
+            {
+                return this.NotFound(new { Status = false, Message = e.Message });
             }
         }
     }

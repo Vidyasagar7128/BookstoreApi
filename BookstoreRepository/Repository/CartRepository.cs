@@ -59,5 +59,33 @@ namespace BookstoreRepository.Repository
                 throw new Exception(e.Message);
             }
         }
+
+        /// <summary>
+        /// Increase Quantity
+        /// </summary>
+        /// <param name="userId">Passing userId</param>
+        /// <param name="bookId">Passing bookId</param>
+        /// <returns>Increased or not</returns>
+        public async Task<int> Increase(int userId, int bookId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(this.Configuration.GetConnectionString("database")))
+                {
+                    SqlCommand sql = new SqlCommand("CartIncreamentSP", con);
+                    sql.CommandType = System.Data.CommandType.StoredProcedure;
+                    sql.Parameters.AddWithValue("@BookId", bookId);
+                    sql.Parameters.AddWithValue("@UserId", userId);
+                    await con.OpenAsync();
+                    int result = await sql.ExecuteNonQueryAsync();
+                    await con.CloseAsync();
+                    return result;
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
     }
 }

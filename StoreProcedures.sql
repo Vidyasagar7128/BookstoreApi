@@ -40,3 +40,14 @@ SET NOCOUNT ON
 INSERT INTO Cart (BookId,UserId) VALUES(@BookId,@UserId)
 END
 GO
+------------------------------------Increament for cart------------------------------------
+CREATE PROCEDURE CartIncreamentSP(
+	@BookId int,
+	@UserId int
+)
+AS
+BEGIN
+SET NOCOUNT ON
+UPDATE Cart SET Quantity= Quantity+1 WHERE BookId = @BookId AND UserId = @UserId
+END
+GO

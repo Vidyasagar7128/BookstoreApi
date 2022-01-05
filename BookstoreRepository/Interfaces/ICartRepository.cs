@@ -6,5 +6,6 @@ namespace BookstoreRepository.Interfaces
     {
         Task<int> Add(int userId, int bookId);
         Task<int> Remove(int userId, int bookId);
+        Task<int> Increase(int userId, int bookId);
     }
 }

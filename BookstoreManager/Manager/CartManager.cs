@@ -48,5 +48,23 @@ namespace BookstoreManager.Manager
                 throw new Exception(e.Message);
             }
         }
+
+        /// <summary>
+        /// Increament Quantity
+        /// </summary>
+        /// <param name="bookId">passing bookId</param>
+        /// <param name="userId">passing userId</param>
+        /// <returns>Increament or not</returns>
+        public async Task<int> IncreamentQuantity(int userId, int bookId)
+        {
+            try
+            {
+                return await this._cartRepository.Increase(userId, bookId);
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
     }
 }
