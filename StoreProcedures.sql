@@ -29,3 +29,14 @@ SET NOCOUNT ON
 UPDATE Books SET Title= @Title, Author= @Author, Quantity= @Quantity, Price= @Price, Details = @Details WHERE BookId= @BookId
 END
 GO
+-------------------------------------------for Cart table--------------------------------
+CREATE PROCEDURE AddToCartSP(
+	@BookId int,
+	@UserId int
+)
+AS
+BEGIN
+SET NOCOUNT ON
+INSERT INTO Cart (BookId,UserId) VALUES(@BookId,@UserId)
+END
+GO

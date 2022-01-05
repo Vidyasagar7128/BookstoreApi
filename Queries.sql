@@ -30,18 +30,19 @@ select * from Users
 select * from Reviews
 update Books set Reviews = 0 where BookId = 2
 
-INSERT BookImages VALUES('https//:img2.com',6)
-delete from Books where BookId=4
-delete from BookImages where BookId=4
+INSERT BookImages VALUES('https//:img4.com',8)
+--delete from Books where BookId=4
+--delete from BookImages where BookId=4
+--delete from BookImages where ImageId=13
+
 --------------------------------------------Reviews Table-------------------
 CREATE TABLE Reviews (ReviewId int IDENTITY PRIMARY KEY NOT NULL, Star float(53), Text varchar(255),
 BookId int FOREIGN KEY REFERENCES Books(BookId),UserId int FOREIGN KEY REFERENCES Users(UserId))
 INSERT Reviews VALUES(4.5,'Best book',1,2)
---------------------------------------------------------------------
-drop table BookImages
-drop table Books
-drop table Reviews
 --------------------------------------------------------Added Cascade-----------------------------
 alter table BookImages drop constraint FK__BookImage__BookI__3B75D760
 alter table BookImages add constraint FK__BookImage__BookI__3B75D760
 foreign key (BookId) references Books(BookId) on delete cascade
+-------------------------------------------------------Cart Table------------
+CREATE TABLE Cart (CartId int IDENTITY PRIMARY KEY NOT NULL,Quantity int default 1, BookId int FOREIGN KEY REFERENCES Books(BookId),UserId int FOREIGN KEY REFERENCES Users(UserId) on delete cascade)
+select * from Cart
