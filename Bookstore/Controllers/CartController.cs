@@ -103,5 +103,34 @@ namespace Bookstore.Controllers
                 return this.NotFound(new { Status = false, Message = e.Message });
             }
         }
+
+        /// <summary>
+        /// Increase Quantity
+        /// </summary>
+        /// <param name="bookId">passing bookId</param>
+        /// <returns>Increamented or not</returns>
+        [HttpPut]
+        [Route("decrease")]
+        public async Task<IActionResult> DecreaseQuantity([FromQuery] int bookId)
+        {
+            try
+            {
+                Request.Headers.TryGetValue("Authorization", out this.head);
+                int id = await this._auth.ValidateJwtToken(this.head);
+                int result = await this._cartManager.DecreamentQuantity(id, bookId);
+                if (result == -1)
+                {
+                    return this.Ok(new { status = true, Message = "Quantity Decreamented" });
+                }
+                else
+                {
+                    return this.BadRequest(new { status = false, Message = result });
+                }
+            }
+            catch (Exception e)
+            {
+                return this.NotFound(new { Status = false, Message = e.Message });
+            }
+        }
     }
 }

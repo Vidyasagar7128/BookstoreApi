@@ -66,5 +66,22 @@ namespace BookstoreManager.Manager
                 throw new Exception(e.Message);
             }
         }
+        /// <summary>
+        /// Decreament Quantity
+        /// </summary>
+        /// <param name="bookId">passing bookId</param>
+        /// <param name="userId">passing userId</param>
+        /// <returns>Decreament or not</returns>
+        public async Task<int> DecreamentQuantity(int userId, int bookId)
+        {
+            try
+            {
+                return await this._cartRepository.Decrease(userId, bookId);
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
     }
 }
