@@ -30,5 +30,23 @@ namespace BookstoreManager.Manager
                 throw new Exception(e.Message);
             }
         }
+
+        /// <summary>
+        /// remove book from cart
+        /// </summary>
+        /// <param name="bookId">passing bookId</param>
+        /// <param name="userId">passing userId</param>
+        /// <returns>deleted or not</returns>
+        public async Task<int> DeletefromCart(int userId, int bookId)
+        {
+            try
+            {
+                return await this._cartRepository.Remove(userId, bookId);
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
     }
 }

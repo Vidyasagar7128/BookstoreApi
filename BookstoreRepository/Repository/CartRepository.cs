@@ -1,5 +1,6 @@
 ﻿using BookstoreRepository.Interfaces;
 using Microsoft.Extensions.Configuration;
+using System;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
 
@@ -31,6 +32,31 @@ namespace BookstoreRepository.Repository
                 int status = await sql.ExecuteNonQueryAsync();
                 await con.CloseAsync();
                 return status;
+            }
+        }
+
+        /// <summary>
+        /// remove book from cart
+        /// </summary>
+        /// <param name="bookId">passing bookId</param>
+        /// <param name="userId">passing userId</param>
+        /// <returns>deleted or not</returns>
+        public async Task<int> Remove(int userId, int bookId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(this.Configuration.GetConnectionString("database")))
+                {
+                    SqlCommand sql = new SqlCommand("delete from Cart where BookId='" + bookId + "'AND UserId='" + userId + "'", con);
+                    await con.OpenAsync();
+                    int result = await sql.ExecuteNonQueryAsync();
+                    await con.CloseAsync();
+                    return result;
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
             }
         }
     }

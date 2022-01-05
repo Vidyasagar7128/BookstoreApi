@@ -50,5 +50,29 @@ namespace Bookstore.Controllers
                 return this.NotFound(e.Message);
             }
         }
+
+        [HttpDelete]
+        [Route("remove")]
+        public async Task<IActionResult> BookRemoveFromCart([FromQuery] int bookId)
+        {
+            try
+            {
+                Request.Headers.TryGetValue("Authorization", out this.head);
+                int userId = await this._auth.ValidateJwtToken(this.head);
+                int result = await this._cartManager.DeletefromCart(userId, bookId);
+                if (result == 1)
+                {
+                    return this.Ok(new { status = true, Response = "Book deleted from cart." });
+                }
+                else
+                {
+                    return this.BadRequest(new { status = false, Response = "Something went wrong." });
+                }
+            }
+            catch (Exception e)
+            {
+                return this.NotFound(e.Message);
+            }
+        }
     }
 }
