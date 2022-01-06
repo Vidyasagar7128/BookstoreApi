@@ -105,3 +105,17 @@ UPDATE Address SET Address = @Address, City = @City, State = @State, Type = @Typ
 WHERE AddressId = @AddressId AND UserId = @UserId
 END
 GO
+
+CREATE PROCEDURE ShowAddress(
+	@UserId int
+)
+AS
+BEGIN
+SET NOCOUNT ON
+SELECT Users.Name, Users.Mobile, Address.AddressId, Address.Address, Address.City, Address.State,Address.Type FROM Address
+INNER JOIN Users ON(Address.UserId = Users.UserId)
+WHERE Users.UserId = @UserId
+END
+GO
+
+select * from Address

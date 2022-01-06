@@ -107,5 +107,43 @@ namespace BookstoreRepository.Repository
                 throw new Exception(e.Message);
             }
         }
+
+        /// <summary>
+        /// List of address
+        /// </summary>
+        /// <returns>List of address</returns>
+        public async Task<IEnumerable<AddressModel>> ShowAddress(int userId)
+        {
+            try
+            {
+                List<AddressModel> list = new List<AddressModel>();
+                using (SqlConnection con = new SqlConnection(this.Configuration.GetConnectionString("database")))
+                {
+                    SqlCommand sql = new SqlCommand("ShowAddress", con);
+                    sql.CommandType = System.Data.CommandType.StoredProcedure;
+                    sql.Parameters.AddWithValue("@UserId",userId);
+                    await con.OpenAsync();
+                    SqlDataReader reader = await sql.ExecuteReaderAsync();
+                    while (await reader.ReadAsync())
+                    {
+                        AddressModel address = new AddressModel();
+                        address.Name = reader["Name"].ToString();
+                        address.Mobile = (long)reader["Mobile"];
+                        address.AddressId = (int)reader["AddressId"];
+                        address.Address = reader["Address"].ToString();
+                        address.City = reader["City"].ToString();
+                        address.State = reader["State"].ToString();
+                        address.Type = reader["Type"].ToString();
+                        list.Add(address);
+                    }
+                    await con.CloseAsync();
+                    return list;
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
     }
 }

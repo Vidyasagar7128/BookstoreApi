@@ -108,5 +108,29 @@ namespace Bookstore.Controllers
                 return this.NotFound(new { status = false, Message = e.Message });
             }
         }
+
+        [HttpGet]
+        [Route("address")]
+        public async Task<IActionResult> GetAllAddresses()
+        {
+            try
+            {
+                Request.Headers.TryGetValue("Authorization", out this.head);
+                int id = await this._auth.ValidateJwtToken(this.head);
+                IEnumerable<AddressModel> result = await this._addressManager.ListAddress(id);
+                if (result.Count() >= 1)
+                {
+                    return this.Ok(new { status = true, Data = result });
+                }
+                else
+                {
+                    return this.BadRequest(new { status = false, Message = result });
+                }
+            }
+            catch (Exception e)
+            {
+                return NotFound(new { status = false, Message = e.Message });
+            }
+        }
     }
 }

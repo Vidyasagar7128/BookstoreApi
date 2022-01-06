@@ -67,5 +67,21 @@ namespace BookstoreManager.Manager
                 throw new Exception(e.Message);
             }
         }
+
+        /// <summary>
+        /// List of address
+        /// </summary>
+        /// <returns>List of address</returns>
+        public async Task<IEnumerable<AddressModel>> ListAddress(int userId)
+        {
+            try
+            {
+                return await this._addressRepository.ShowAddress(userId);
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
     }
 }
