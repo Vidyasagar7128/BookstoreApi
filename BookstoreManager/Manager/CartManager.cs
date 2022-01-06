@@ -1,6 +1,9 @@
 ﻿using BookstoreManager.Interfaces;
+using BookstoreModel;
 using BookstoreRepository.Interfaces;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace BookstoreManager.Manager
@@ -77,6 +80,23 @@ namespace BookstoreManager.Manager
             try
             {
                 return await this._cartRepository.Decrease(userId, bookId);
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
+
+        /// <summary>
+        /// get all cart items
+        /// </summary>
+        /// <param name="userId">form token</param>
+        /// <returns>list of cart item</returns>
+        public async Task<IEnumerable<CartModel>> GetCartItems(int userId)
+        {
+            try
+            {
+                return await this._cartRepository.Items(userId);
             }
             catch (Exception e)
             {

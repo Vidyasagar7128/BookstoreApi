@@ -1,6 +1,9 @@
-﻿using BookstoreRepository.Interfaces;
+﻿using BookstoreModel;
+using BookstoreRepository.Interfaces;
 using Microsoft.Extensions.Configuration;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
 
@@ -109,6 +112,47 @@ namespace BookstoreRepository.Repository
                     await con.CloseAsync();
                     return result;
                 }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
+
+        /// <summary>
+        /// get all cart items
+        /// </summary>
+        /// <param name="userId">form token</param>
+        /// <returns>list of cart item</returns>
+        public async Task<IEnumerable<CartModel>> Items(int userId)
+        {
+            try
+            {
+                List<CartModel> cart = new List<CartModel>();
+                using (SqlConnection con = new SqlConnection(this.Configuration.GetConnectionString("database")))
+                {
+                    SqlCommand sql = new SqlCommand("ShowCartItems", con);
+                    sql.CommandType = System.Data.CommandType.StoredProcedure;
+                    sql.Parameters.AddWithValue("@UserId",userId);
+                    await con.OpenAsync();
+                    SqlDataReader reader = await sql.ExecuteReaderAsync();
+                    while (await reader.ReadAsync())
+                    {
+                        CartModel cartModel = new CartModel();
+                        cartModel.CartId = (int)reader["CartId"];
+                        cartModel.BookId = (int)reader["BookId"];
+                        cartModel.Quantity = (int) reader["Quantity"];
+                        cartModel.Title = reader["Title"].ToString();
+                        cartModel.Author = reader["Author"].ToString();
+                        cartModel.Rating = (double)reader["Rating"];
+                        cartModel.Reviews = (int)reader["Reviews"];
+                        cartModel.Price = (double)reader["Price"];
+                        cartModel.Details = reader["Details"].ToString();
+                        cart.Add(cartModel);
+                    }
+                    await con.CloseAsync();
+                }
+                return cart;
             }
             catch (Exception e)
             {

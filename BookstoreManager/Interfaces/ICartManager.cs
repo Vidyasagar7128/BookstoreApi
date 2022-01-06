@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using BookstoreModel;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace BookstoreManager.Interfaces
 {
@@ -8,5 +10,6 @@ namespace BookstoreManager.Interfaces
         Task<int> DeletefromCart(int userId, int bookId);
         Task<int> IncreamentQuantity(int userId, int bookId);
         Task<int> DecreamentQuantity(int userId, int bookId);
+        Task<IEnumerable<CartModel>> GetCartItems(int userId);
     }
 }

@@ -1,9 +1,13 @@
 ﻿using BookstoreManager.Interfaces;
+using BookstoreModel;
 using BookstoreRepository.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Bookstore.Controllers
@@ -130,6 +134,33 @@ namespace Bookstore.Controllers
             catch (Exception e)
             {
                 return this.NotFound(new { Status = false, Message = e.Message });
+            }
+        }
+        /// <summary>
+        /// Get All Data of Cart
+        /// </summary>
+        /// <returns>list of items in cart</returns>
+        [HttpGet]
+        [Route("cart")]
+        public async Task<IActionResult> GetAllCartItems()
+        {
+            try
+            {
+                Request.Headers.TryGetValue("Authorization", out this.head);
+                int id = await this._auth.ValidateJwtToken(this.head);
+                IEnumerable<CartModel> result = await this._cartManager.GetCartItems(id);
+                if (result.Count() >= 1)
+                {
+                    return this.Ok(new { status = true, Data = result });
+                }
+                else
+                {
+                    return this.BadRequest(new { status = false, Message = result });
+                }
+            }
+            catch (Exception e)
+            {
+                return NotFound(new { status = false, Message = e.Message });
             }
         }
     }
