@@ -82,5 +82,30 @@ namespace BookstoreRepository.Repository
                 }
             }
         }
+
+        /// <summary>
+        /// delete address
+        /// </summary>
+        /// <param name="userId">passing userId</param>
+        /// <param name="addressId">passing addressId</param>
+        /// <returns>deleted or not</returns>
+        public async Task<int> Delete(int userId, int addressId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(this.Configuration.GetConnectionString("database")))
+                {
+                    SqlCommand sql = new SqlCommand("DELETE FROM Address WHERE AddressId='" +addressId+ "' AND UserId='"+userId+"'", con);
+                    await con.OpenAsync();
+                    int status = await sql.ExecuteNonQueryAsync();
+                    await con.CloseAsync();
+                    return status;
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
     }
 }

@@ -60,7 +60,7 @@ namespace Bookstore.Controllers
         /// </summary>
         /// <param name="address">passing AddressModel</param>
         /// <returns>added or not</returns>
-        [HttpPost]
+        [HttpPut]
         [Route("update")]
         public async Task<IActionResult> UpdateAddressToUser([FromBody] AddressModel address)
         {
@@ -73,6 +73,30 @@ namespace Bookstore.Controllers
                 if (result == -1)
                 {
                     return this.Ok(new { status = true, Message = "Address updated successfully." });
+                }
+                else
+                {
+                    return this.BadRequest(new { status = false, Message = "Something went wrong." });
+                }
+            }
+            catch (Exception e)
+            {
+                return this.NotFound(new { status = false, Message = e.Message });
+            }
+        }
+
+        [HttpDelete]
+        [Route("delete")]
+        public async Task<IActionResult> DeleteAddressToUser([FromQuery] int addressId)
+        {
+            try
+            {
+                Request.Headers.TryGetValue("Authorization", out this.head);
+                int userId = await this._auth.ValidateJwtToken(this.head);
+                int result = await this._addressManager.DeleteAddress(userId, addressId);
+                if (result == 1)
+                {
+                    return this.Ok(new { status = true, Message = "Address deleted successfully." });
                 }
                 else
                 {

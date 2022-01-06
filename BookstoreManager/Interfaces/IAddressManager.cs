@@ -7,5 +7,6 @@ namespace BookstoreManager.Interfaces
     {
         Task<int> AddAddress(AddressModel address);
         Task<int> UpdateAddress(AddressModel address);
+        Task<int> DeleteAddress(int userId, int addressId);
     }
 }

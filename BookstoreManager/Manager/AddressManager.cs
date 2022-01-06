@@ -49,5 +49,23 @@ namespace BookstoreManager.Manager
                 throw new Exception(e.Message);
             }
         }
+
+        /// <summary>
+        /// delete address
+        /// </summary>
+        /// <param name="userId">passing userId</param>
+        /// <param name="addressId">passing addressId</param>
+        /// <returns>deleted or not</returns>
+        public async Task<int> DeleteAddress(int userId, int addressId)
+        {
+            try
+            {
+                return await this._addressRepository.Delete(userId, addressId);
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
     }
 }
