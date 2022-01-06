@@ -24,6 +24,12 @@ namespace Bookstore.Controllers
             this._addressManager = addressManager;
             this._auth = auth;
         }
+
+        /// <summary>
+        /// Adding address to user
+        /// </summary>
+        /// <param name="address">passing AddressModel</param>
+        /// <returns>added or not</returns>
         [HttpPost]
         [Route("add")]
         public async Task<IActionResult> AddAddressToUser([FromBody] AddressModel address)
@@ -41,6 +47,36 @@ namespace Bookstore.Controllers
                 else
                 {
                     return this.BadRequest(new { status = false, Message = result });
+                }
+            }
+            catch (Exception e)
+            {
+                return this.NotFound(new { status = false, Message = e.Message });
+            }
+        }
+
+        /// <summary>
+        /// Adding address to user
+        /// </summary>
+        /// <param name="address">passing AddressModel</param>
+        /// <returns>added or not</returns>
+        [HttpPost]
+        [Route("update")]
+        public async Task<IActionResult> UpdateAddressToUser([FromBody] AddressModel address)
+        {
+            try
+            {
+                Request.Headers.TryGetValue("Authorization", out this.head);
+                int userId = await this._auth.ValidateJwtToken(this.head);
+                address.UserId = userId;
+                int result = await this._addressManager.UpdateAddress(address);
+                if (result == -1)
+                {
+                    return this.Ok(new { status = true, Message = "Address updated successfully." });
+                }
+                else
+                {
+                    return this.BadRequest(new { status = false, Message = "Something went wrong." });
                 }
             }
             catch (Exception e)

@@ -16,11 +16,33 @@ namespace BookstoreManager.Manager
             this._addressRepository = addressRepository;
         }
 
+        /// <summary>
+        /// Adding address to user
+        /// </summary>
+        /// <param name="address">passing AddressModel</param>
+        /// <returns>added or not</returns>
         public async Task<int> AddAddress(AddressModel address)
         {
             try
             {
                 return await this._addressRepository.AddNew(address);
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
+
+        /// <summary>
+        /// Updating address to user
+        /// </summary>
+        /// <param name="address">passing AddressModel</param>
+        /// <returns>Updated or not</returns>
+        public async Task<int> UpdateAddress(AddressModel address)
+        {
+            try
+            {
+                return await this._addressRepository.Update(address);
             }
             catch (Exception e)
             {

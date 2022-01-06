@@ -89,3 +89,19 @@ SET NOCOUNT ON
 INSERT INTO Address (Address, City, State, Type, UserId) VALUES(@Address, @City, @State, @Type, @UserId)
 END
 GO
+
+ALTER PROCEDURE UpdateAddressSP(
+	@AddressId int,
+	@Address varchar(150),
+	@City varchar(30),
+	@State varchar(30),
+	@Type varchar(25),
+	@UserId int
+)
+AS
+BEGIN
+SET NOCOUNT ON
+UPDATE Address SET Address = @Address, City = @City, State = @State, Type = @Type
+WHERE AddressId = @AddressId AND UserId = @UserId
+END
+GO
