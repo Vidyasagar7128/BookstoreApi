@@ -13,6 +13,7 @@ namespace Bookstore.Controllers
     public class BookController : Controller
     {
         private readonly IBookManager _bookManager;
+        
         public BookController(IBookManager bookManager)
         {
             this._bookManager = bookManager;

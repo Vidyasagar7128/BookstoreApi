@@ -62,3 +62,30 @@ SET NOCOUNT ON
 UPDATE Cart SET Quantity= Quantity-1 WHERE BookId = @BookId AND UserId = @UserId
 END
 GO
+
+ALTER PROCEDURE ShowCartItems(
+	@UserId int
+)
+AS
+BEGIN
+SET NOCOUNT ON
+SELECT Cart.CartId, Books.BookId, Cart.Quantity, Books.Title, Books.Author,
+Books.Rating, Books.Reviews,Books.Price, Books.Details FROM Cart
+INNER JOIN Books ON(Cart.BookId = Books.BookId)
+WHERE Cart.UserId = @UserId
+END
+GO
+----------------------------------------Address---------------------------------
+CREATE PROCEDURE SetAddressSP(
+	@Address varchar(150),
+	@City varchar(30),
+	@State varchar(30),
+	@Type varchar(25),
+	@UserId int
+)
+AS
+BEGIN
+SET NOCOUNT ON
+INSERT INTO Address (Address, City, State, Type, UserId) VALUES(@Address, @City, @State, @Type, @UserId)
+END
+GO

@@ -34,6 +34,7 @@ INSERT BookImages VALUES('https//:img4.com',8)
 --delete from Books where BookId=4
 --delete from BookImages where BookId=4
 --delete from BookImages where ImageId=13
+--delete from Users where UserId=7
 
 --------------------------------------------Reviews Table-------------------
 CREATE TABLE Reviews (ReviewId int IDENTITY PRIMARY KEY NOT NULL, Star float(53), Text varchar(255),
@@ -49,3 +50,9 @@ select * from Cart
 ----------------------------------------------Address Table----------------------
 CREATE TABLE Address (AddressId int IDENTITY PRIMARY KEY NOT NULL, Address varchar(150), City varchar(30), State varchar(30), Type varchar(25),
 UserId int FOREIGN KEY REFERENCES Users(UserId) on delete cascade)
+
+insert into Address VALUES('Pratik Nagar','Pune','Maharashtra','Home',3)
+select * from Address
+SELECT Users.Name, Users.Mobile, Address.AddressId,Address.Address, Address.City, Address.State, Address.Type from Address
+INNER JOIN Users ON(Address.UserId = Users.UserId)
+WHERE Users.UserId = 3
