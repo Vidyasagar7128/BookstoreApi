@@ -119,3 +119,37 @@ END
 GO
 
 select * from Address
+-------------------------------------------------Wishlist Table-------------------------
+ALTER PROCEDURE AddToWishlistSP(
+	@BookId int,
+	@UserId int
+)
+AS
+BEGIN
+SET NOCOUNT ON
+INSERT INTO WishList (BookId, UserId) VALUES(@BookId, @UserId)
+END
+GO
+
+CREATE PROCEDURE RemoveFromWishlistSP(
+	@BookId int,
+	@UserId int
+)
+AS
+BEGIN
+SET NOCOUNT ON
+DELETE FROM WishList WHERE BookId = @BookId AND UserId = @UserId
+END
+GO
+
+CREATE PROCEDURE DataFromWishlistSP(
+	@UserId int
+)
+AS
+BEGIN
+SET NOCOUNT ON
+SELECT * FROM Books
+INNER JOIN WishList ON(Books.BookId = WishList.BookId)
+WHERE WishList.UserId = @UserId
+END
+GO

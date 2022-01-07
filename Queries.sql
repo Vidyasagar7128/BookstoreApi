@@ -56,3 +56,8 @@ select * from Address
 SELECT Users.Name, Users.Mobile, Address.AddressId,Address.Address, Address.City, Address.State, Address.Type from Address
 INNER JOIN Users ON(Address.UserId = Users.UserId)
 WHERE Users.UserId = 3
+--------------------------------------------Wishlist Table----------------
+CREATE TABLE WishList (WishlistId int IDENTITY PRIMARY KEY NOT NULL,
+BookId int FOREIGN KEY REFERENCES Books(BookId) on delete cascade,
+UserId int FOREIGN KEY REFERENCES Users(UserId) on delete cascade)
+select * from WishList

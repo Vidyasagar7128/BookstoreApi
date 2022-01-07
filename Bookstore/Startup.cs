@@ -41,6 +41,8 @@ namespace Bookstore
             services.AddTransient<IAuth, Auth>();
             services.AddTransient<IAddressRepository, AddressRepository>();
             services.AddTransient<IAddressManager, AddressManager>();
+            services.AddTransient<IFavoriteRepository , FavoriteRepository>();
+            services.AddTransient<IFavoriteManager, FavoriteManager>();
 
             services.AddCors(options => options.AddPolicy("AllowAllHeaders", builder =>
             {
