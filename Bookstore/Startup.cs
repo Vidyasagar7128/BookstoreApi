@@ -43,6 +43,8 @@ namespace Bookstore
             services.AddTransient<IAddressManager, AddressManager>();
             services.AddTransient<IFavoriteRepository , FavoriteRepository>();
             services.AddTransient<IFavoriteManager, FavoriteManager>();
+            services.AddTransient<IOrderRepository, OrderRepository>();
+            services.AddTransient<IOrderManager, OrderManager>();
 
             services.AddCors(options => options.AddPolicy("AllowAllHeaders", builder =>
             {

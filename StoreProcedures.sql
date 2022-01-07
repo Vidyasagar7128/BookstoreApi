@@ -153,3 +153,27 @@ INNER JOIN WishList ON(Books.BookId = WishList.BookId)
 WHERE WishList.UserId = @UserId
 END
 GO
+--------------------------------------Order Table--------------------------
+ALTER PROCEDURE AddOrderSP(
+	@BookId int,
+	@Quantity int,
+	@AddressId int,
+	@UserId int
+)
+AS
+BEGIN
+SET NOCOUNT ON
+INSERT INTO Orders (BookId, Quantity, AddressId, UserId) VALUES(@BookId, @Quantity, @AddressId, @UserId)
+END
+GO
+
+CREATE PROCEDURE CancleOrderSP(
+	@OrderId int,
+	@UserId int
+)
+AS
+BEGIN
+SET NOCOUNT ON
+UPDATE Orders SET Status = 2 WHERE OrderId = @OrderId AND UserId = @UserId
+END
+GO

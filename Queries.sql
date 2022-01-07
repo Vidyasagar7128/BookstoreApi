@@ -61,3 +61,11 @@ CREATE TABLE WishList (WishlistId int IDENTITY PRIMARY KEY NOT NULL,
 BookId int FOREIGN KEY REFERENCES Books(BookId) on delete cascade,
 UserId int FOREIGN KEY REFERENCES Users(UserId) on delete cascade)
 select * from WishList
+---------------------------------------------Order Table-------------------
+CREATE TABLE Orders (OrderId int IDENTITY PRIMARY KEY NOT NULL,
+BookId int FOREIGN KEY REFERENCES Books(BookId) on delete cascade,
+AddressId int FOREIGN KEY REFERENCES Address(AddressId),
+UserId int FOREIGN KEY REFERENCES Users(UserId) on delete cascade,
+Quantity int,
+Status int default 1
+)
