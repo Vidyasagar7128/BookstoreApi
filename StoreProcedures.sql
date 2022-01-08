@@ -150,13 +150,14 @@ GO
 ALTER PROCEDURE AddOrderSP(
 	@BookId int,
 	@Quantity int,
+	@Price decimal,
 	@AddressId int,
 	@UserId int
 )
 AS
 BEGIN
 SET NOCOUNT ON
-INSERT INTO Orders (BookId, Quantity, AddressId, UserId) VALUES(@BookId, @Quantity, @AddressId, @UserId)
+INSERT INTO Orders (BookId, Quantity, TotalPrice, AddressId, UserId) VALUES(@BookId, @Quantity,@Price, @AddressId, @UserId)
 END
 GO
 
@@ -187,6 +188,7 @@ WHERE Users.UserId = @UserId
 END
 GO
 exec ShowOrderSP 3
+exec ShowCartItems 3
 
 select * from Orders
 select * from Users

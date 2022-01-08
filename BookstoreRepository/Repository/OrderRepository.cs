@@ -34,6 +34,7 @@ namespace BookstoreRepository.Repository
                     sql.CommandType = System.Data.CommandType.StoredProcedure;
                     sql.Parameters.AddWithValue("@BookId", order.BookId);
                     sql.Parameters.AddWithValue("@Quantity", order.Quantity);
+                    sql.Parameters.AddWithValue("@Price", order.Price);
                     sql.Parameters.AddWithValue("@AddressId", order.AddressId);
                     sql.Parameters.AddWithValue("@UserId", userId);
                     await con.OpenAsync();
