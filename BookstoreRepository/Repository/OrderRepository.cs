@@ -75,5 +75,47 @@ namespace BookstoreRepository.Repository
                 throw new Exception(e.Message);
             }
         }
+
+        /// <summary>
+        /// show all orders
+        /// </summary>
+        /// <param name="userId">passing userId</param>
+        /// <returns>show all orders</returns>
+        public async Task<IEnumerable<OrderDetailsModel>> Show(int userId)
+        {
+            try
+            {
+                List<OrderDetailsModel> orders = new List<OrderDetailsModel>();
+                using (SqlConnection con = new SqlConnection(this.Configuration.GetConnectionString("database")))
+                {
+                    SqlCommand sql = new SqlCommand("ShowOrderSP", con);
+                    sql.CommandType = System.Data.CommandType.StoredProcedure;
+                    sql.Parameters.AddWithValue("@UserId", userId);
+                    await con.OpenAsync();
+                    SqlDataReader reader = await sql.ExecuteReaderAsync();
+                    while (await reader.ReadAsync())
+                    {
+                        OrderDetailsModel orderDetailsModel = new OrderDetailsModel();
+                        orderDetailsModel.OrderId = (int)reader["OrderId"];
+                        orderDetailsModel.Name = reader["Name"].ToString();
+                        orderDetailsModel.Mobile = (long) reader["Mobile"];
+                        orderDetailsModel.Address = reader["Address"].ToString();
+                        orderDetailsModel.City = reader["City"].ToString();
+                        orderDetailsModel.State = reader["State"].ToString();
+                        orderDetailsModel.Title = reader["Title"].ToString();
+                        orderDetailsModel.Price = (double)reader["Price"];
+                        orderDetailsModel.Status = (int)reader["Status"];
+                        orderDetailsModel.Date = reader["OrderDate"].ToString();
+                        orders.Add(orderDetailsModel);
+                    }
+                    await con.CloseAsync();
+                    return orders;
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
     }
 }

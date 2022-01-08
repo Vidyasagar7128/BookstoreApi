@@ -177,3 +177,26 @@ SET NOCOUNT ON
 UPDATE Orders SET Status = 2 WHERE OrderId = @OrderId AND UserId = @UserId
 END
 GO
+
+ALTER PROCEDURE ShowOrderSP(
+	@UserId int
+)
+AS
+BEGIN
+SET NOCOUNT ON
+SELECT Orders.OrderId, Users.Name, Users.Mobile, Address.Address, Address.City,Address.State, Books.Title,
+Cart.Quantity, Books.Price, Orders.Status, Orders.OrderDate FROM Books
+INNER JOIN Orders ON(Orders.BookId = Books.BookId)
+INNER JOIN Address ON(Address.AddressId = Orders.AddressId)
+INNER JOIN Cart ON(Cart.BookId = Orders.BookId)
+INNER JOIN Users ON(Users.UserId = Orders.UserId)
+WHERE Users.UserId = @UserId
+END
+GO
+exec ShowOrderSP 3
+
+select * from Orders
+select * from Users
+select * from Address
+select * from Books
+select * from Cart

@@ -32,7 +32,7 @@ namespace Bookstore.Controllers
         /// <returns>Add USer Order or not</returns>
         [HttpPost]
         [Route("add")]
-        public async Task<IActionResult> AddUSerOrder([FromQuery] OrderModel order)
+        public async Task<IActionResult> AddUSerOrder([FromBody] OrderModel order)
         {
             try
             {
@@ -61,7 +61,7 @@ namespace Bookstore.Controllers
         /// <returns>cancle order or not</returns>
         [HttpPut]
         [Route("cancle")]
-        public async Task<IActionResult> CancleUSerOrder([FromBody] int orderId)
+        public async Task<IActionResult> CancleUSerOrder([FromQuery] int orderId)
         {
             try
             {
@@ -80,6 +80,34 @@ namespace Bookstore.Controllers
             catch (Exception e)
             {
                 return this.NotFound(new { status = false, Message = e.Message });
+            }
+        }
+
+        /// <summary>
+        /// return all orders by user
+        /// </summary>
+        /// <returns>List of Orders</returns>
+        [HttpGet]
+        [Route("orders")]
+        public async Task<IActionResult> ShowBooks()
+        {
+            try
+            {
+                Request.Headers.TryGetValue("Authorization", out this.head);
+                int userId = await this._auth.ValidateJwtToken(this.head);
+                IEnumerable<OrderDetailsModel> result = await this._orderManager.ShowOrderList(userId);
+                if (result.Count() >= 1)
+                {
+                    return this.Ok(new { status = true, Response = result });
+                }
+                else
+                {
+                    return this.BadRequest(new { status = false, Response = result });
+                }
+            }
+            catch (Exception e)
+            {
+                return this.NotFound(e.Message);
             }
         }
     }

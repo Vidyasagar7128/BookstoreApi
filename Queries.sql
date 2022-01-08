@@ -67,5 +67,8 @@ BookId int FOREIGN KEY REFERENCES Books(BookId) on delete cascade,
 AddressId int FOREIGN KEY REFERENCES Address(AddressId),
 UserId int FOREIGN KEY REFERENCES Users(UserId) on delete cascade,
 Quantity int,
-Status int default 1
+TotalPrice decimal default 0,
+Status int default 1,
+OrderDate DATE default GETDATE()
 )
+select * from Orders

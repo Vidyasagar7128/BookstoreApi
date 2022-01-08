@@ -52,5 +52,22 @@ namespace BookstoreManager.Manager
                 throw new Exception(e.Message);
             }
         }
+
+        /// <summary>
+        /// show all orders
+        /// </summary>
+        /// <param name="userId">passing userId</param>
+        /// <returns>show all orders</returns>
+        public async Task<IEnumerable<OrderDetailsModel>> ShowOrderList(int userId)
+        {
+            try
+            {
+                return await this._orderRepository.Show(userId);
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
     }
 }
