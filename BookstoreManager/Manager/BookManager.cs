@@ -101,11 +101,35 @@ namespace BookstoreManager.Manager
                 throw new Exception(e.Message);
             }
         }
+
+        /// <summary>
+        /// Uploading Images 
+        /// </summary>
+        /// <param name="bookId">passing bookId</param>
+        /// <param name="file">file</param>
+        /// <returns>uploaded or not</returns>
         public async Task<string> UploadImg(int bookId, IFormFile file)
         {
             try
             {
                 return await this._bookRepository.UploadImg(bookId, file);
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
+
+        /// <summary>
+        /// Show Books with Images
+        /// </summary>
+        /// <param name="bookId">passing bookId</param>
+        /// <returns>List of books with Images</returns>
+        public async Task<BookDetailsModel> BooksWithImages(int bookId)
+        {
+            try
+            {
+                return await this._bookRepository.GetOneWithImage(bookId);
             }
             catch (Exception e)
             {

@@ -219,5 +219,62 @@ namespace BookstoreRepository.Repository
                 throw new Exception(e.Message);
             }
         }
+
+        /// <summary>
+        /// Show Books with Images
+        /// </summary>
+        /// <param name="bookId">passing bookId</param>
+        /// <returns>List of books with Images</returns>
+        public async Task<BookDetailsModel> GetOneWithImage(int bookId)
+        {
+            try
+            {
+                BookDetailsModel book = new BookDetailsModel();
+                List<ImageModel> imgList = new List<ImageModel>();
+                using (SqlConnection con = new SqlConnection(this.Configuration.GetConnectionString("database")))
+                {
+                    await con.OpenAsync();
+                    using (SqlCommand sqlImg = new SqlCommand("select * from BookImages where BookId='" + bookId + "'", con))
+                    {
+                        SqlDataReader readerImg = await sqlImg.ExecuteReaderAsync();
+                        while (await readerImg.ReadAsync())
+                        {
+                            ImageModel imageModel = new ImageModel();
+                            imageModel.ImageId = (int)readerImg["ImageId"];
+                            imageModel.Image = readerImg["ImageUrl"].ToString();
+                            imageModel.BookId = (int)readerImg["BookId"];
+                            imgList.Add(imageModel);
+                        }
+                        readerImg.Close();
+                    }
+
+                    using (SqlCommand sql = new SqlCommand("select * from Books where BookId='" + bookId + "'", con))
+                    {
+                        SqlDataReader reader = await sql.ExecuteReaderAsync();
+                        if (await reader.ReadAsync())
+                        {
+                            book.BookId = (int)reader["BookId"];
+                            book.Title = reader["Title"].ToString();
+                            book.Author = reader["Author"].ToString();
+                            book.Rating = (double)reader["Rating"];
+                            book.Reviews = (int)reader["Reviews"];
+                            book.Quantity = (int)reader["Quantity"];
+                            book.Price = (double)reader["Price"];
+                            book.Details = reader["Details"].ToString();
+                            book.Images = imgList;
+                        }
+                        else
+                        {
+                            throw new Exception("Sorry! Book does not exist with this BookId.");
+                        }
+                        return book;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
     }
 }

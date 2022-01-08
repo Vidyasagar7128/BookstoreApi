@@ -170,5 +170,32 @@ namespace Bookstore.Controllers
                 return this.NotFound(new { Status = false, Message = e.Message });
             }
         }
+
+        /// <summary>
+        /// Show Books with Images
+        /// </summary>
+        /// <param name="bookId">passing bookId</param>
+        /// <returns>List of books with Images</returns>
+        [HttpGet]
+        [Route("bookimage")]
+        public async Task<IActionResult> GetOneBookByIdWithImages([FromQuery] int bookId)
+        {
+            try
+            {
+                BookDetailsModel result = await this._bookManager.BooksWithImages(bookId);
+                if (result != null)
+                {
+                    return this.Ok(new { status = true, Response = "Book fetched successfully.", Data = result });
+                }
+                else
+                {
+                    return this.BadRequest(new { status = false, Response = "Something went wrong." });
+                }
+            }
+            catch (Exception e)
+            {
+                return this.NotFound(e.Message);
+            }
+        }
     }
 }
