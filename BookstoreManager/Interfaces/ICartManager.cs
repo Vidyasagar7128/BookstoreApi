@@ -6,10 +6,9 @@ namespace BookstoreManager.Interfaces
 {
     public interface ICartManager
     {
-        Task<int> Bookadd(int userId, int bookId);
+        Task<int> Bookadd(int userId, int bookId, int price);
         Task<int> DeletefromCart(int userId, int bookId);
-        Task<int> IncreamentQuantity(int userId, int bookId);
-        Task<int> DecreamentQuantity(int userId, int bookId);
+        Task<int> IncreamentQuantity(QuantityModel quantity);
         Task<IEnumerable<CartModel>> GetCartItems(int userId);
     }
 }

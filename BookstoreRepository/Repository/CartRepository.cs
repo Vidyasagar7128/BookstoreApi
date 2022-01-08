@@ -23,7 +23,7 @@ namespace BookstoreRepository.Repository
         /// <param name="userId">passing userId</param>
         /// <param name="bookId">passing bookId</param>
         /// <returns>Added or not</returns>
-        public async Task<int> Add(int userId, int bookId)
+        public async Task<int> Add(int userId, int bookId, int price)
         {
             using (SqlConnection con = new SqlConnection(this.Configuration.GetConnectionString("database")))
             {
@@ -31,6 +31,7 @@ namespace BookstoreRepository.Repository
                 sql.CommandType = System.Data.CommandType.StoredProcedure;
                 sql.Parameters.AddWithValue("@BookId", bookId);
                 sql.Parameters.AddWithValue("@UserId", userId);
+                sql.Parameters.AddWithValue("@Price", price);
                 await con.OpenAsync();
                 int status = await sql.ExecuteNonQueryAsync();
                 await con.CloseAsync();
@@ -69,7 +70,7 @@ namespace BookstoreRepository.Repository
         /// <param name="userId">Passing userId</param>
         /// <param name="bookId">Passing bookId</param>
         /// <returns>Increased or not</returns>
-        public async Task<int> Increase(int userId, int bookId)
+        public async Task<int> Increase(QuantityModel quantity)
         {
             try
             {
@@ -77,36 +78,10 @@ namespace BookstoreRepository.Repository
                 {
                     SqlCommand sql = new SqlCommand("CartIncreamentSP", con);
                     sql.CommandType = System.Data.CommandType.StoredProcedure;
-                    sql.Parameters.AddWithValue("@BookId", bookId);
-                    sql.Parameters.AddWithValue("@UserId", userId);
-                    await con.OpenAsync();
-                    int result = await sql.ExecuteNonQueryAsync();
-                    await con.CloseAsync();
-                    return result;
-                }
-            }
-            catch (Exception e)
-            {
-                throw new Exception(e.Message);
-            }
-        }
-
-        /// <summary>
-        /// Decrease Quantity
-        /// </summary>
-        /// <param name="userId">Passing userId</param>
-        /// <param name="bookId">Passing bookId</param>
-        /// <returns>Decrease or not</returns>
-        public async Task<int> Decrease(int userId, int bookId)
-        {
-            try
-            {
-                using (SqlConnection con = new SqlConnection(this.Configuration.GetConnectionString("database")))
-                {
-                    SqlCommand sql = new SqlCommand("CartDecreamentSP", con);
-                    sql.CommandType = System.Data.CommandType.StoredProcedure;
-                    sql.Parameters.AddWithValue("@BookId", bookId);
-                    sql.Parameters.AddWithValue("@UserId", userId);
+                    sql.Parameters.AddWithValue("@CartId", quantity.CartId);
+                    sql.Parameters.AddWithValue("@Quantity", quantity.Quantity);
+                    sql.Parameters.AddWithValue("@Price", quantity.Quantity*quantity.Price);
+                    sql.Parameters.AddWithValue("@UserId", quantity.UserId);
                     await con.OpenAsync();
                     int result = await sql.ExecuteNonQueryAsync();
                     await con.CloseAsync();

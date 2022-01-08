@@ -22,11 +22,11 @@ namespace BookstoreManager.Manager
         /// <param name="userId">userId</param>
         /// <param name="bookId">bookId</param>
         /// <returns>added or not</returns>
-        public async Task<int> Bookadd(int userId, int bookId)
+        public async Task<int> Bookadd(int userId, int bookId, int price)
         {
             try
             {
-                return await this._cartRepository.Add(userId, bookId);
+                return await this._cartRepository.Add(userId, bookId, price);
             }
             catch (Exception e)
             {
@@ -58,28 +58,11 @@ namespace BookstoreManager.Manager
         /// <param name="bookId">passing bookId</param>
         /// <param name="userId">passing userId</param>
         /// <returns>Increament or not</returns>
-        public async Task<int> IncreamentQuantity(int userId, int bookId)
+        public async Task<int> IncreamentQuantity(QuantityModel quantity)
         {
             try
             {
-                return await this._cartRepository.Increase(userId, bookId);
-            }
-            catch (Exception e)
-            {
-                throw new Exception(e.Message);
-            }
-        }
-        /// <summary>
-        /// Decreament Quantity
-        /// </summary>
-        /// <param name="bookId">passing bookId</param>
-        /// <param name="userId">passing userId</param>
-        /// <returns>Decreament or not</returns>
-        public async Task<int> DecreamentQuantity(int userId, int bookId)
-        {
-            try
-            {
-                return await this._cartRepository.Decrease(userId, bookId);
+                return await this._cartRepository.Increase(quantity);
             }
             catch (Exception e)
             {

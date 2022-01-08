@@ -30,36 +30,28 @@ UPDATE Books SET Title= @Title, Author= @Author, Quantity= @Quantity, Price= @Pr
 END
 GO
 -------------------------------------------for Cart table--------------------------------
-CREATE PROCEDURE AddToCartSP(
+ALTER PROCEDURE AddToCartSP(
 	@BookId int,
-	@UserId int
+	@UserId int,
+	@Price int
 )
 AS
 BEGIN
 SET NOCOUNT ON
-INSERT INTO Cart (BookId,UserId) VALUES(@BookId,@UserId)
+INSERT INTO Cart (BookId,UserId,Price) VALUES(@BookId,@UserId,@Price)
 END
 GO
 ------------------------------------Increament Decreament for cart------------------------------------
-CREATE PROCEDURE CartIncreamentSP(
-	@BookId int,
+ALTER PROCEDURE CartIncreamentSP(
+	@CartId int,
+	@Quantity int,
+	@Price float,
 	@UserId int
 )
 AS
 BEGIN
 SET NOCOUNT ON
-UPDATE Cart SET Quantity= Quantity+1 WHERE BookId = @BookId AND UserId = @UserId
-END
-GO
-
-CREATE PROCEDURE CartDecreamentSP(
-	@BookId int,
-	@UserId int
-)
-AS
-BEGIN
-SET NOCOUNT ON
-UPDATE Cart SET Quantity= Quantity-1 WHERE BookId = @BookId AND UserId = @UserId
+UPDATE Cart SET Price = @Price, Quantity= @Quantity WHERE CartId = @CartId AND UserId = @UserId
 END
 GO
 
@@ -70,11 +62,12 @@ AS
 BEGIN
 SET NOCOUNT ON
 SELECT Cart.CartId, Books.BookId, Cart.Quantity, Books.Title, Books.Author,
-Books.Rating, Books.Reviews,Books.Price, Books.Details FROM Cart
+Books.Rating, Books.Reviews,Cart.Price, Books.Details FROM Cart
 INNER JOIN Books ON(Cart.BookId = Books.BookId)
 WHERE Cart.UserId = @UserId
 END
 GO
+exec ShowCartItems 3
 ----------------------------------------Address---------------------------------
 CREATE PROCEDURE SetAddressSP(
 	@Address varchar(150),

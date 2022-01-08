@@ -33,13 +33,13 @@ namespace Bookstore.Controllers
         /// <returns>added or not</returns>
         [HttpPost]
         [Route("add")]
-        public async Task<IActionResult> BookAddToCart([FromQuery] int bookId)
+        public async Task<IActionResult> BookAddToCart([FromQuery] int bookId, [FromQuery] int price)
         {
             try
             {
                 Request.Headers.TryGetValue("Authorization", out this.head);
                 int userId = await this._auth.ValidateJwtToken(this.head);
-                int result = await this._cartManager.Bookadd(userId, bookId);
+                int result = await this._cartManager.Bookadd(userId, bookId, price);
                 if (result == -1)
                 {
                     return this.Ok(new { status = true, Message = "Book added to cart." });
@@ -86,13 +86,14 @@ namespace Bookstore.Controllers
         /// <returns>Increamented or not</returns>
         [HttpPut]
         [Route("increase")]
-        public async Task<IActionResult> IncreaseQuantity([FromQuery] int bookId)
+        public async Task<IActionResult> IncreaseQuantity([FromBody] QuantityModel quantity)
         {
             try
             {
                 Request.Headers.TryGetValue("Authorization", out this.head);
                 int id = await this._auth.ValidateJwtToken(this.head);
-                int result = await this._cartManager.IncreamentQuantity(id, bookId);
+                quantity.UserId = id;
+                int result = await this._cartManager.IncreamentQuantity(quantity);
                 if (result == -1)
                 {
                     return this.Ok(new { status = true, Message = "Quantity Increamented" });
@@ -108,34 +109,6 @@ namespace Bookstore.Controllers
             }
         }
 
-        /// <summary>
-        /// Increase Quantity
-        /// </summary>
-        /// <param name="bookId">passing bookId</param>
-        /// <returns>Increamented or not</returns>
-        [HttpPut]
-        [Route("decrease")]
-        public async Task<IActionResult> DecreaseQuantity([FromQuery] int bookId)
-        {
-            try
-            {
-                Request.Headers.TryGetValue("Authorization", out this.head);
-                int id = await this._auth.ValidateJwtToken(this.head);
-                int result = await this._cartManager.DecreamentQuantity(id, bookId);
-                if (result == -1)
-                {
-                    return this.Ok(new { status = true, Message = "Quantity Decreamented" });
-                }
-                else
-                {
-                    return this.BadRequest(new { status = false, Message = result });
-                }
-            }
-            catch (Exception e)
-            {
-                return this.NotFound(new { Status = false, Message = e.Message });
-            }
-        }
         /// <summary>
         /// Get All Data of Cart
         /// </summary>

@@ -47,6 +47,8 @@ foreign key (BookId) references Books(BookId) on delete cascade
 -------------------------------------------------------Cart Table------------
 CREATE TABLE Cart (CartId int IDENTITY PRIMARY KEY NOT NULL,Quantity int default 1, BookId int FOREIGN KEY REFERENCES Books(BookId),UserId int FOREIGN KEY REFERENCES Users(UserId) on delete cascade)
 select * from Cart
+ALTER TABLE Cart ADD Price float(53)
+truncate table Cart
 ----------------------------------------------Address Table----------------------
 CREATE TABLE Address (AddressId int IDENTITY PRIMARY KEY NOT NULL, Address varchar(150), City varchar(30), State varchar(30), Type varchar(25),
 UserId int FOREIGN KEY REFERENCES Users(UserId) on delete cascade)
