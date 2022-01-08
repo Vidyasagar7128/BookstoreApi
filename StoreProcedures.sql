@@ -179,7 +179,7 @@ AS
 BEGIN
 SET NOCOUNT ON
 SELECT Orders.OrderId, Users.Name, Users.Mobile, Address.Address, Address.City,Address.State, Books.Title,
-Cart.Quantity, Books.Price, Orders.Status, Orders.OrderDate FROM Books
+Cart.Quantity, Orders.TotalPrice, Orders.Status, Orders.OrderDate FROM Books
 INNER JOIN Orders ON(Orders.BookId = Books.BookId)
 INNER JOIN Address ON(Address.AddressId = Orders.AddressId)
 INNER JOIN Cart ON(Cart.BookId = Orders.BookId)
@@ -189,9 +189,20 @@ END
 GO
 exec ShowOrderSP 3
 exec ShowCartItems 3
-
+----------------------------------------Images-----------------------
+CREATE PROCEDURE AddImage(
+	@ImageUrl varchar(255),
+	@BookId int
+)
+AS
+BEGIN
+INSERT INTO BookImages (ImageUrl, BookId) VALUES(@ImageUrl, @BookId)
+END
+GO
+---------------------------------------------------------------------
 select * from Orders
 select * from Users
 select * from Address
 select * from Books
 select * from Cart
+select * from BookImages

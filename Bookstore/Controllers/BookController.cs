@@ -1,5 +1,6 @@
 ﻿using BookstoreManager.Interfaces;
 using BookstoreModel;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -145,6 +146,28 @@ namespace Bookstore.Controllers
             catch (Exception e)
             {
                 return this.NotFound(e.Message);
+            }
+        }
+
+        [HttpPost]
+        [Route("image")]
+        public async Task<IActionResult> UploadImage(IFormFile file, int bookId)
+        {
+            try
+            {
+                var result = await this._bookManager.UploadImg(bookId, file);
+                if (result.Contains("1"))
+                {
+                    return Ok(new { Status = true, Data = "Image added successfully." });
+                }
+                else
+                {
+                    return Ok(new { Status = true, Data = result });
+                }
+            }
+            catch (Exception e)
+            {
+                return this.NotFound(new { Status = false, Message = e.Message });
             }
         }
     }

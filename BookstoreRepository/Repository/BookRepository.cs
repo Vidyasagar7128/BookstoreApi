@@ -1,5 +1,8 @@
 ﻿using BookstoreModel;
 using BookstoreRepository.Interfaces;
+using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -169,6 +172,46 @@ namespace BookstoreRepository.Repository
                     }
                     
                     return book;
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
+
+        public async Task<string> UploadImg(int bookId, IFormFile file)
+        {
+            try
+            {
+                if (file != null)
+                {
+                    Cloudinary cloudinary = new Cloudinary(new Account(
+                                                    "dwpsmsxy6",
+                                                    "171559438548485",
+                                                    "Cw3WujFZNaBxKYc0K0pj3dhKExg"));
+                    var uploadImage = new ImageUploadParams()
+                    {
+                        File = new FileDescription(file.FileName, file.OpenReadStream()),
+                    };
+                    var uploadResult = cloudinary.Upload(uploadImage);
+                    var uploadPath = uploadResult.Url;
+
+                    using (SqlConnection con = new SqlConnection(this.Configuration.GetConnectionString("database")))
+                    {
+                        SqlCommand sql = new SqlCommand("AddImage", con);
+                        sql.CommandType = System.Data.CommandType.StoredProcedure;
+                        sql.Parameters.AddWithValue("@ImageUrl", uploadPath.ToString());
+                        sql.Parameters.AddWithValue("@BookId", bookId);
+                        await con.OpenAsync();
+                        int status = await sql.ExecuteNonQueryAsync();
+                        await con.CloseAsync();
+                        return status.ToString();
+                    }
+                }
+                else
+                {
+                    return "Failed to upload image";
                 }
             }
             catch (Exception e)

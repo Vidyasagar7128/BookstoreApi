@@ -1,4 +1,5 @@
 ﻿using BookstoreModel;
+using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -11,5 +12,6 @@ namespace BookstoreManager.Interfaces
         Task<int> DeleteBook(int bookId);
         Task<int> UpdateBook(BookModel bookModel);
         Task<BookModel> GetOneBook(int bookId);
+        Task<string> UploadImg(int bookId, IFormFile file);
     }
 }
