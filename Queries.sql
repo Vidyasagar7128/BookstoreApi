@@ -74,3 +74,9 @@ Status int default 1,
 OrderDate DATE default GETDATE()
 )
 select * from Orders
+---------------------------------------------Reviews Table-------------------
+CREATE TABLE Reviews (ReviewId int IDENTITY PRIMARY KEY NOT NULL,
+Rating float(53), Comment varchar(150), CreatedAt DATE default GETDATE(),
+BookId int FOREIGN KEY REFERENCES Books(BookId) on delete cascade,
+UserId int FOREIGN KEY REFERENCES Users(UserId)
+)

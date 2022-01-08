@@ -190,15 +190,30 @@ GO
 exec ShowOrderSP 3
 exec ShowCartItems 3
 ----------------------------------------Images-----------------------
-CREATE PROCEDURE AddImage(
+ALTER PROCEDURE AddImage(
 	@ImageUrl varchar(255),
 	@BookId int
 )
 AS
 BEGIN
+SET NOCOUNT ON
 INSERT INTO BookImages (ImageUrl, BookId) VALUES(@ImageUrl, @BookId)
 END
 GO
+----------------------------------------Reviews----------------------
+CREATE PROCEDURE AddReviews(
+	@Rating int,
+	@Comment varchar(150),
+	@BookId int,
+	@UserId int
+)
+AS
+BEGIN
+SET NOCOUNT ON
+INSERT INTO Reviews (Rating, Comment, CreatedAt, BookId, UserId) VALUES(@Rating, @Comment, GETDATE(), @BookId, @UserId)
+END
+GO
+select * from Reviews
 ---------------------------------------------------------------------
 select * from Orders
 select * from Users

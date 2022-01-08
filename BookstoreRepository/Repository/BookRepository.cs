@@ -233,7 +233,6 @@ namespace BookstoreRepository.Repository
                 List<ImageModel> imgList = new List<ImageModel>();
                 using (SqlConnection con = new SqlConnection(this.Configuration.GetConnectionString("database")))
                 {
-                    await con.OpenAsync();
                     using (SqlCommand sqlImg = new SqlCommand("select * from BookImages where BookId='" + bookId + "'", con))
                     {
                         SqlDataReader readerImg = await sqlImg.ExecuteReaderAsync();
