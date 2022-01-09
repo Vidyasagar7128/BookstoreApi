@@ -219,5 +219,32 @@ namespace Bookstore.Controllers
                 return this.NotFound(e.Message);
             }
         }
+
+        /// <summary>
+        /// All reviews
+        /// </summary>
+        /// <param name="bookId">passing bookId</param>
+        /// <returns>List of reviews</returns>
+        [HttpGet]
+        [Route("reviews")]
+        public async Task<IActionResult> AllReviews([FromQuery] int bookId)
+        {
+            try
+            {
+                IEnumerable<ReviewsModel> result = await this._bookManager.GetAllReviews(bookId);
+                if (result.Count() > 0)
+                {
+                    return this.Ok(new { status = true, Data = result });
+                }
+                else
+                {
+                    return this.BadRequest(new { status = false, Message = result });
+                }
+            }
+            catch (Exception e)
+            {
+                return this.NotFound(new { status = false, Message = e.Message });
+            }
+        }
     }
 }

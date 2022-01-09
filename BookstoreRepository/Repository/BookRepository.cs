@@ -321,5 +321,44 @@ namespace BookstoreRepository.Repository
                 throw new Exception(e.Message);
             }
         }
+
+        /// <summary>
+        /// All reviews
+        /// </summary>
+        /// <param name="bookId">passing bookId</param>
+        /// <returns>List of reviews</returns>
+        public async Task<IEnumerable<ReviewsModel>> allReviews(int bookId)
+        {
+            try
+            {
+                List<ReviewsModel> reviews = new List<ReviewsModel>();
+                using (SqlConnection con = new SqlConnection(this.Configuration.GetConnectionString("database")))
+                {
+                    using (SqlCommand sql = new SqlCommand("AllReviews", con))
+                    {
+                        sql.CommandType = System.Data.CommandType.StoredProcedure;
+                        sql.Parameters.AddWithValue("@BookId", bookId);
+                        await con.OpenAsync();
+                        SqlDataReader reader = await sql.ExecuteReaderAsync();
+                        while (await reader.ReadAsync())
+                        {
+                            ReviewsModel review = new ReviewsModel();
+                            review.ReviewId = (int)reader["ReviewId"];
+                            review.Rating = (double)reader["Rating"];
+                            review.Name = reader["Name"].ToString();
+                            review.Comment = reader["Comment"].ToString();
+                            review.CreatedAt = reader["CreatedAt"].ToString();
+                            reviews.Add(review);
+                        }
+                        await con.CloseAsync();
+                        return reviews;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
     }
 }

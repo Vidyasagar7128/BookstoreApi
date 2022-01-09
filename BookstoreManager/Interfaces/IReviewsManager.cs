@@ -7,6 +7,5 @@ namespace BookstoreManager.Interfaces
     public interface IReviewsManager
     {
         Task<int> AddReview(ReviewsModel reviews);
-        Task<IEnumerable<ReviewsModel>> GetAllReviews(int bookId);
     }
 }

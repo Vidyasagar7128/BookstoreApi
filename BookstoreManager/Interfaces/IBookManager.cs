@@ -15,5 +15,6 @@ namespace BookstoreManager.Interfaces
         Task<string> UploadImg(int bookId, IFormFile file);
         Task<BookDetailsModel> BooksWithImages(int bookId);
         Task<int> AddbannerImg(IFormFile file, int bookId);
+        Task<IEnumerable<ReviewsModel>> GetAllReviews(int bookId);
     }
 }
