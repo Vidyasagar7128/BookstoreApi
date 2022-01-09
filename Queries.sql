@@ -29,7 +29,8 @@ select * from BookImages
 select * from Users
 select * from Reviews
 update Books set Reviews = 0 where BookId = 2
-
+ALTER TABLE Books ADD ImgPath varchar(100) 
+---------------------------------------------------------------BookImages--------------------
 INSERT BookImages VALUES('https//:img4.com',8)
 --delete from Books where BookId=4
 --delete from BookImages where BookId=4

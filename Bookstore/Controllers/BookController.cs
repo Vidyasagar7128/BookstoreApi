@@ -73,6 +73,28 @@ namespace Bookstore.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("bannerimage")]
+        public async Task<IActionResult> BookBannerToImage(IFormFile file, int bookId)
+        {
+            try
+            {
+                int result = await this._bookManager.AddbannerImg(file,bookId);
+                if (result == -1)
+                {
+                    return this.Ok(new { status = true, Response = "Book Banner image successfully." });
+                }
+                else
+                {
+                    return this.BadRequest(new { status = false, Response = "Something went wrong." });
+                }
+            }
+            catch (Exception e)
+            {
+                return this.NotFound(e.Message);
+            }
+        }
+
         /// <summary>
         /// Delete Books
         /// </summary>

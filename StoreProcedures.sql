@@ -14,6 +14,17 @@ INSERT INTO Books VALUES(@Title,@Author,@Rating,@Reviews,@Quantity,@Price,@Detai
 END
 GO
 select * from Books
+--------------------------------------------Banner Image---------------------------
+CREATE PROCEDURE BannerImage(
+	@ImagePath varchar(100),
+	@BookId int
+)
+AS
+BEGIN
+SET NOCOUNT ON
+UPDATE Books SET ImgPath = @ImagePath WHERE BookId = @BookId
+END
+GO
 --------------------------------------------for Update Books-----------------------
 CREATE PROCEDURE UpdateBookSP(
 	@BookId int,
@@ -201,7 +212,7 @@ INSERT INTO BookImages (ImageUrl, BookId) VALUES(@ImageUrl, @BookId)
 END
 GO
 ----------------------------------------Reviews----------------------
-CREATE PROCEDURE AddReviews(
+ALTER PROCEDURE AddReviews(
 	@Rating int,
 	@Comment varchar(150),
 	@BookId int,
@@ -210,7 +221,20 @@ CREATE PROCEDURE AddReviews(
 AS
 BEGIN
 SET NOCOUNT ON
+BEGIN TRY
+DECLARE @Count int
+BEGIN TRANSACTION
 INSERT INTO Reviews (Rating, Comment, CreatedAt, BookId, UserId) VALUES(@Rating, @Comment, GETDATE(), @BookId, @UserId)
+SELECT @Count = COUNT(*) FROM Reviews
+UPDATE Books SET Reviews = @Count WHERE BookId = @BookId
+COMMIT TRANSACTION
+END TRY
+BEGIN CATCH
+IF @@TRANCOUNT > 0
+       BEGIN
+          ROLLBACK TRANSACTION
+       END;
+END CATCH
 END
 GO
 select * from Reviews

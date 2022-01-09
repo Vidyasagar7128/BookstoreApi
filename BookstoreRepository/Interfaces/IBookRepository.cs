@@ -14,5 +14,6 @@ namespace BookstoreRepository.Interfaces
         Task<BookModel> GetOne(int bookId);
         Task<string> UploadImg(int bookId, IFormFile file);
         Task<BookDetailsModel> GetOneWithImage(int bookId);
+        Task<int> AddBanner(IFormFile file, int bookId);
     }
 }

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -43,6 +44,33 @@ namespace Bookstore.Controllers
                 if (result == -1)
                 {
                     return this.Ok(new { status = true, Message = "Review added successfully." });
+                }
+                else
+                {
+                    return this.BadRequest(new { status = false, Message = result });
+                }
+            }
+            catch (Exception e)
+            {
+                return this.NotFound(new { status = false, Message = e.Message });
+            }
+        }
+
+        /// <summary>
+        /// All reviews
+        /// </summary>
+        /// <param name="bookId">passing bookId</param>
+        /// <returns>List of reviews</returns>
+        [HttpGet]
+        [Route("reviews")]
+        public async Task<IActionResult> AllReviews([FromQuery] int bookId)
+        {
+            try
+            {
+                IEnumerable<ReviewsModel> result = await this._reviewsManager.GetAllReviews(bookId);
+                if (result.Count() > 0)
+                {
+                    return this.Ok(new { status = true, Data = result });
                 }
                 else
                 {

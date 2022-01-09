@@ -39,6 +39,7 @@ namespace BookstoreRepository.Repository
                         BookModel bookModel = new BookModel();
                         bookModel.BookId = (int)reader["BookId"];
                         bookModel.Title = reader["Title"].ToString();
+                        bookModel.BannerImg = reader["ImgPath"].ToString();
                         bookModel.Author = reader["Author"].ToString();
                         bookModel.Rating = (double)reader["Rating"];
                         bookModel.Reviews = reader["Reviews"] == null ? 0 : (int)reader["Reviews"];
@@ -81,6 +82,47 @@ namespace BookstoreRepository.Repository
                     int status = await sql.ExecuteNonQueryAsync();
                     await con.CloseAsync();
                     return status;
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
+
+        public async Task<int> AddBanner(IFormFile file, int bookId)
+        {
+            try
+            {
+                if (file != null)
+                {
+                    Cloudinary cloudinary = new Cloudinary(new Account(
+                                                    "dwpsmsxy6",
+                                                    "171559438548485",
+                                                    "Cw3WujFZNaBxKYc0K0pj3dhKExg"));
+                    var uploadImage = new ImageUploadParams()
+                    {
+                        File = new FileDescription(file.FileName, file.OpenReadStream()),
+                    };
+                    var uploadResult = cloudinary.Upload(uploadImage);
+                    var uploadPath = uploadResult.Url;
+                    using (SqlConnection con = new SqlConnection(this.Configuration.GetConnectionString("database")))
+                    {
+                        using (SqlCommand sql = new SqlCommand("BannerImage", con))
+                        {
+                            sql.CommandType = System.Data.CommandType.StoredProcedure;
+                            sql.Parameters.AddWithValue("@ImagePath",uploadPath.ToString());
+                            sql.Parameters.AddWithValue("@BookId", bookId);
+                            await con.OpenAsync();
+                            int status = await sql.ExecuteNonQueryAsync();
+                            await con.CloseAsync();
+                            return status;
+                        }
+                    }
+                }
+                else
+                {
+                    return 0;
                 }
             }
             catch (Exception e)
@@ -235,6 +277,7 @@ namespace BookstoreRepository.Repository
                 {
                     using (SqlCommand sqlImg = new SqlCommand("select * from BookImages where BookId='" + bookId + "'", con))
                     {
+                        await con.OpenAsync();
                         SqlDataReader readerImg = await sqlImg.ExecuteReaderAsync();
                         while (await readerImg.ReadAsync())
                         {
@@ -245,10 +288,12 @@ namespace BookstoreRepository.Repository
                             imgList.Add(imageModel);
                         }
                         readerImg.Close();
+                        await con.CloseAsync();
                     }
 
                     using (SqlCommand sql = new SqlCommand("select * from Books where BookId='" + bookId + "'", con))
                     {
+                        await con.OpenAsync();
                         SqlDataReader reader = await sql.ExecuteReaderAsync();
                         if (await reader.ReadAsync())
                         {
@@ -261,6 +306,7 @@ namespace BookstoreRepository.Repository
                             book.Price = (double)reader["Price"];
                             book.Details = reader["Details"].ToString();
                             book.Images = imgList;
+                            await con.CloseAsync();
                         }
                         else
                         {

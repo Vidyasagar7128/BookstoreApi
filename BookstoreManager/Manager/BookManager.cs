@@ -52,6 +52,24 @@ namespace BookstoreManager.Manager
         }
 
         /// <summary>
+        /// Adding Images
+        /// </summary>
+        /// <param name="file">IFormFile</param>
+        /// <param name="bookId">passing bookId</param>
+        /// <returns>added or not</returns>
+        public async Task<int> AddbannerImg(IFormFile file, int bookId)
+        {
+            try
+            {
+                return await this._bookRepository.AddBanner(file, bookId);
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
+
+        /// <summary>
         /// Delete book
         /// </summary>
         /// <param name="bookId">int id</param>

@@ -8,6 +8,7 @@ namespace BookstoreModel
     {
         public int BookId { get; set; }
         public string Title { get; set; }
+        public string BannerImg { get; set; }
         public string Author { get; set; }
         public double Rating { get; set; }
         public int Reviews { get; set; }

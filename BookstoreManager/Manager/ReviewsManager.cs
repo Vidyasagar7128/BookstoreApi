@@ -2,6 +2,7 @@
 using BookstoreModel;
 using BookstoreRepository.Interfaces;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace BookstoreManager.Manager
@@ -24,6 +25,23 @@ namespace BookstoreManager.Manager
             try
             {
                 return await this._reviewsRepository.Add(reviews);
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
+
+        /// <summary>
+        /// All reviews
+        /// </summary>
+        /// <param name="bookId">passing bookId</param>
+        /// <returns>List of reviews</returns>
+        public async Task<IEnumerable<ReviewsModel>> GetAllReviews(int bookId)
+        {
+            try
+            {
+                return await this._reviewsRepository.allReviews(bookId);
             }
             catch (Exception e)
             {
