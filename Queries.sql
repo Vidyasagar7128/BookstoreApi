@@ -30,6 +30,7 @@ select * from Users
 select * from Reviews
 update Books set Reviews = 0 where BookId = 2
 ALTER TABLE Books ADD ImgPath varchar(100) 
+ALTER TABLE Books ADD CONSTRAINT Quantity CHECK(Quantity > -1)
 ---------------------------------------------------------------BookImages--------------------
 INSERT BookImages VALUES('https//:img4.com',8)
 --delete from Books where BookId=4

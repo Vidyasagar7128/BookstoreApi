@@ -223,10 +223,11 @@ BEGIN
 SET NOCOUNT ON
 BEGIN TRY
 DECLARE @Count int
+DECLARE @Avg float(53)
 BEGIN TRANSACTION
 INSERT INTO Reviews (Rating, Comment, CreatedAt, BookId, UserId) VALUES(@Rating, @Comment, GETDATE(), @BookId, @UserId)
-SELECT @Count = COUNT(*) FROM Reviews
-UPDATE Books SET Reviews = @Count WHERE BookId = @BookId
+SELECT @Count = COUNT(*), @Avg = AVG(Rating) FROM Reviews
+UPDATE Books SET Reviews = @Count, Rating = @Avg WHERE BookId = @BookId
 COMMIT TRANSACTION
 END TRY
 BEGIN CATCH
@@ -238,6 +239,18 @@ END CATCH
 END
 GO
 select * from Reviews
+
+CREATE PROCEDURE AllReviews(
+	@BookId int
+)
+AS
+BEGIN
+SELECT Users.Name, Reviews.ReviewId, Reviews.Rating, Reviews.Comment, Reviews.CreatedAt FROM Users
+INNER JOIN Reviews ON(Reviews.UserId = Users.UserId)
+WHERE BookId = @BookId
+END
+GO
+exec AllReviews 8
 ---------------------------------------------------------------------
 select * from Orders
 select * from Users
@@ -245,3 +258,11 @@ select * from Address
 select * from Books
 select * from Cart
 select * from BookImages
+select * from Reviews
+select AVG(Rating) from Reviews
+insert into Reviews VALUES(2.6,'Nice book.',GETDATE(),8,5)
+update Books set Quantity = 9 where BookId = 3
+--CartId,Quantity,BookId,Price
+exec CheckQuantity 1,6,3,289,3
+select * from Books
+select * from Cart
